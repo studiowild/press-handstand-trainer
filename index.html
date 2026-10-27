@@ -1,0 +1,2321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Still Point</title>
+<meta name="description" content="A calm companion for your first press handstand.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#f1ede6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Still Point">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Newsreader:ital,opsz,wght@1,6..72,300;1,6..72,400&family=Outfit:wght@200;300;400;500&display=swap">
+<style>
+/* Layout: every screen is its own scene. The sky-and-sea backdrop re-tints, blurs and zooms per screen;
+   type sits directly on it, anchored to the screen's edges. One glass surface at most per screen. */
+:root {
+  --ink: #fbf8f5;
+  --ink-2: rgba(251, 248, 245, .74);
+  --ink-3: rgba(251, 248, 245, .5);
+  --ink-4: rgba(251, 248, 245, .28);
+  --hair: rgba(255, 255, 255, .2);
+  --glass: rgba(255, 255, 255, .14);
+  --glass-hi: rgba(255, 255, 255, .24);
+  --pearl: #fffaf4;
+  --pearl-ink: #4b4955;
+  --deep: #23222f;
+  --glow: #ffd6bd;
+  --warn: #ffcf9e;
+  --tshadow: 0 1px 18px rgba(16,14,26,.22);
+  --tshadow-hero: 0 1px 2px rgba(20,16,34,.25), 0 2px 22px rgba(20,16,34,.35);
+  --sheet-tshadow: 0 1px 16px rgba(16,14,26,.25);
+  --veil-a: rgba(18,16,30,.32); --veil-0: rgba(18,16,30,0); --veil-b: rgba(18,16,30,.5);
+  --tint-c: #0c0b12;
+  --shine: rgba(255,255,255,.16);
+  --btn-shadow: rgba(0,0,0,.5);
+  --danger: #ffc3b8;
+  --fade-0: rgba(21,19,31,0); --fade-1: rgba(21,19,31,.4); --fade-2: rgba(21,19,31,.5);
+  --tabbar: rgba(255,255,255,.1); --tabbar-line: rgba(255,255,255,.16); --sel: rgba(255,255,255,.18);
+  --pool-a: rgba(24,20,40,.42); --pool-b: rgba(24,20,40,.2); --pool-c: rgba(24,20,40,.06);
+  --track: rgba(255,255,255,.2); --ring: rgba(255,255,255,.26); --arc: rgba(255,255,255,.75); --dot-glow: #fff;
+  --orb-a: rgba(255,255,255,.16); --orb-b: rgba(255,255,255,.02);
+  --soft: rgba(255,255,255,.06); --soft-hi: rgba(255,255,255,.22);
+  --thumb-ring: rgba(255,255,255,.12); --thumb-shadow: rgba(0,0,0,.3);
+  --today-ring: rgba(255,255,255,.25);
+  --sheet-scrim: rgba(20,18,32,.38);
+  --switch: rgba(255,255,255,.16); --switch-on: rgba(255,255,255,.42); --knob-on: #fffaf4;
+  --wheel-glow: rgba(255,214,189,.45);
+  --toast: rgba(255,255,255,.18);
+
+  --f-display: "Outfit", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Figtree", "Helvetica Neue", system-ui, sans-serif;
+  --f-voice: "Newsreader", "Iowan Old Style", Georgia, serif;
+
+  --gutter: 24px;
+  --ease: cubic-bezier(.22, .8, .24, 1);
+  color-scheme: dark;
+}
+/* Everyday light mode: warm off-white and brown ink. Workout mode (player, check-in) uses the dark set above. */
+#device { color: var(--ink); }
+#device[data-mode="light"] {
+  --ink: #2f2621; --ink-2: rgba(47,38,33,.74); --ink-3: rgba(47,38,33,.54); --ink-4: rgba(47,38,33,.26);
+  --hair: rgba(47,38,33,.14); --glass: rgba(255,253,250,.55); --glass-hi: rgba(255,253,250,.8);
+  --pearl: #2f2621; --pearl-ink: #f7f3ec; --deep: #f1ede6; --glow: #b9814f; --warn: #a8672c;
+  --tshadow: 0 1px 14px rgba(255,251,245,.55);
+  --tshadow-hero: 0 0 1px rgba(255,251,245,.6), 0 1px 18px rgba(255,251,245,.7);
+  --sheet-tshadow: 0 1px 14px rgba(255,251,245,.5);
+  --veil-a: rgba(246,242,236,.45); --veil-0: rgba(246,242,236,0); --veil-b: rgba(246,242,236,.55);
+  --tint-c: #f3efe8;
+  --shine: rgba(255,255,255,.6);
+  --btn-shadow: rgba(60,44,30,.35);
+  --danger: #a5432f;
+  --fade-0: rgba(243,239,232,0); --fade-1: rgba(243,239,232,.6); --fade-2: rgba(243,239,232,.78);
+  --tabbar: rgba(255,253,250,.55); --tabbar-line: rgba(47,38,33,.08); --sel: rgba(47,38,33,.08);
+  --pool-a: rgba(250,247,242,.62); --pool-b: rgba(250,247,242,.32); --pool-c: rgba(250,247,242,.08);
+  --track: rgba(47,38,33,.14); --ring: rgba(47,38,33,.2); --arc: rgba(47,38,33,.7); --dot-glow: rgba(185,129,79,.6);
+  --orb-a: rgba(255,255,255,.5); --orb-b: rgba(255,255,255,.05);
+  --soft: rgba(47,38,33,.04); --soft-hi: rgba(255,255,255,.75);
+  --thumb-ring: rgba(47,38,33,.08); --thumb-shadow: rgba(60,44,30,.25);
+  --today-ring: rgba(47,38,33,.18);
+  --sheet-scrim: rgba(246,242,236,.92);
+  --switch: rgba(47,38,33,.12); --switch-on: #2f2621; --knob-on: #f7f3ec;
+  --wheel-glow: rgba(185,129,79,.3);
+  --toast: rgba(255,253,250,.82);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--deep); color: var(--ink);
+  font-family: var(--f-body); font-size: 15px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased; overflow: hidden; overscroll-behavior: none;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; -webkit-user-select: none; user-select: none; background: none; border: 0; padding: 0; }
+:focus-visible { outline: 2px solid var(--glow); outline-offset: 3px; border-radius: 8px; }
+h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
+p { margin: 0; }
+
+/* ---------- Device ---------- */
+#device { position: fixed; inset: 0; overflow: hidden; overflow: clip; container-type: size; background: var(--deep); }
+.desk-note { display: none; }
+@media (hover: hover) and (pointer: fine) and (min-width: 520px) {
+  body { background: radial-gradient(ellipse at 50% 30%, #3a3850, #17161f 70%); }
+  #device {
+    inset: auto; left: 50%; top: 50%; width: 393px; height: 852px;
+    transform: translate(-50%, calc(-50% - 12px)) scale(var(--fit, 1));
+    border-radius: 54px; box-shadow: 0 0 0 11px #0d0d12, 0 0 0 12px #2c2b36, 0 50px 120px -30px rgba(0,0,0,.8);
+  }
+  .desk-note { display: block; position: fixed; left: 0; right: 0; bottom: 10px; font-size: 12px; color: var(--ink-3); text-align: center; margin: 0; }
+}
+
+/* ---------- Backdrop: scene + per-screen mood ---------- */
+#sea, #veil, #tint { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#sea {
+  display: block;
+  filter: blur(var(--blur, 0px)) saturate(var(--sat, 1));
+  transform: scale(var(--zoom, 1));
+  transition: filter 1s var(--ease), transform 1.4s var(--ease);
+}
+#veil { background: linear-gradient(180deg, var(--veil-a) 0%, var(--veil-0) 30%, var(--veil-0) 52%, var(--veil-b) 100%); opacity: var(--veil, 1); transition: opacity 1s var(--ease); }
+#tint { background: var(--tint-c); opacity: var(--tint, 0); transition: opacity 1s var(--ease); }
+#device[data-mood="home"]     { --blur: 0px;  --zoom: 1;    --tint: 0;   --veil: 1; }
+#device[data-mood="practice"] { --blur: 22px; --zoom: 1.12; --tint: .22; --veil: .7; --sat: 1.1; }
+#device[data-mood="player"]   { --blur: 30px; --zoom: 1.18; --tint: .7; --veil: .9; --sat: .85; }
+#device[data-mood="checkin"]  { --blur: 40px; --zoom: 1.2;  --tint: .72; --veil: .6; --sat: .85; }
+#device[data-mood="done"]     { --blur: 12px; --zoom: 1.08; --tint: .06; --veil: .8; }
+#device[data-mood="journal"]  { --blur: 26px; --zoom: 1.14; --tint: .28; --veil: .6; }
+#device[data-mood="library"]  { --blur: 26px; --zoom: 1.14; --tint: .26; --veil: .6; }
+
+/* ---------- Screens ---------- */
+.app { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; }
+.scroll {
+  flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none;
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+  padding-block: calc(env(safe-area-inset-top, 0px) + 18px) 24px;
+}
+.scroll::-webkit-scrollbar, .overlay::-webkit-scrollbar, .sheet::-webkit-scrollbar { display: none; }
+.view { display: flex; flex-direction: column; min-height: 100%; }
+.overlay {
+  position: absolute; inset: 0; z-index: 20; overflow-y: auto; overflow-x: hidden; scrollbar-width: none;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column;
+}
+.overlay > .inner { width: 100%; max-width: 460px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+body:has(#overlay:not([hidden])) .app { visibility: hidden; }
+.grow { flex: 1; min-height: 24px; }
+.text-shadow, .view, .overlay { text-shadow: var(--tshadow); }
+
+/* Content lands softly */
+.rise { animation: rise .7s var(--ease) both; animation-delay: calc(var(--d, 0) * 70ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+::view-transition-old(root) { animation: vt-out .38s var(--ease) both; }
+::view-transition-new(root) { animation: vt-in .55s var(--ease) both; }
+@keyframes vt-out { to { opacity: 0; filter: blur(8px); } }
+@keyframes vt-in { from { opacity: 0; filter: blur(8px); } }
+
+/* Crossing into and out of a workout: dusk on the way in, dawn on the way out */
+html[data-vt="enter"]::view-transition-old(root) { animation: vt-enter-out 1.1s cubic-bezier(.4,0,.2,1) both; }
+html[data-vt="enter"]::view-transition-new(root) { animation: vt-enter-in 1.6s cubic-bezier(.2,.7,.2,1) .45s both; }
+html[data-vt="exit"]::view-transition-old(root) { animation: vt-exit-out 1.2s cubic-bezier(.4,0,.2,1) both; }
+html[data-vt="exit"]::view-transition-new(root) { animation: vt-exit-in 1.7s cubic-bezier(.2,.7,.2,1) .3s both; }
+@keyframes vt-enter-out { to { opacity: 0; filter: blur(16px) brightness(.5); transform: scale(.955); } }
+@keyframes vt-enter-in { from { opacity: 0; filter: blur(18px); transform: scale(1.05); } }
+@keyframes vt-exit-out { to { opacity: 0; filter: blur(14px) brightness(1.7); transform: scale(1.035); } }
+@keyframes vt-exit-in { from { opacity: 0; filter: blur(16px) brightness(1.3); transform: scale(.975); } }
+/* the backdrop takes its time when the mode changes */
+#device.shifting #sea { transition: filter 2.4s cubic-bezier(.3,.1,.2,1), transform 2.8s cubic-bezier(.3,.1,.2,1); }
+#device.shifting #tint, #device.shifting #veil { transition: opacity 2.4s cubic-bezier(.3,.1,.2,1); }
+/* arrival sequence: orb swells, the ring draws itself, then words, then controls */
+.arriving .dial .orb { animation: orb-in 1.9s cubic-bezier(.2,.7,.2,1) .7s both, fill-breathe 8s ease-in-out 2.6s infinite; }
+@keyframes orb-in { from { opacity: 0; transform: scale(.35); } to { opacity: .78; transform: scale(.985); } }
+.arriving .dial .ring { stroke-dasharray: 302; stroke-dashoffset: 302; animation: ring-draw 1.8s cubic-bezier(.65,0,.25,1) .9s forwards; }
+@keyframes ring-draw { to { stroke-dashoffset: 0; } }
+.arriving .dial .arc, .arriving .dial .dot { animation: fade .8s ease 2.2s both; }
+.arriving .dial .t { animation: rise 1s var(--ease) 1.4s both; }
+.arriving .rise { animation-duration: 1s; animation-delay: calc(1.6s + var(--d, 0) * 110ms); }
+.arriving .topbar, .arriving .ptrack, .arriving .pmeta { animation: fade 1s ease 1.2s both; }
+.arriving .nextline, .arriving .controls, .arriving .pfoot { animation: rise 1s var(--ease) 2.1s both; }
+.inner.landing .rise { animation-duration: 1s; animation-delay: calc(.9s + var(--d, 0) * 110ms); }
+
+/* sideways slide between main pages */
+html[data-vt="tab-next"]::view-transition-old(page) { animation: page-out-l .32s cubic-bezier(.4,0,.6,1) both; }
+html[data-vt="tab-next"]::view-transition-new(page) { animation: page-in-r .56s cubic-bezier(.2,.8,.2,1) .08s both; }
+html[data-vt="tab-prev"]::view-transition-old(page) { animation: page-out-r .32s cubic-bezier(.4,0,.6,1) both; }
+html[data-vt="tab-prev"]::view-transition-new(page) { animation: page-in-l .56s cubic-bezier(.2,.8,.2,1) .08s both; }
+@keyframes page-out-l { to { transform: translateX(-26%); opacity: 0; } }
+@keyframes page-in-r { from { transform: translateX(26%); opacity: 0; } }
+@keyframes page-out-r { to { transform: translateX(26%); opacity: 0; } }
+@keyframes page-in-l { from { transform: translateX(-26%); opacity: 0; } }
+html[data-vt^="tab-"]::view-transition-group(page) { animation-duration: .58s; }
+/* the backdrop and tab bar hold still while pages slide */
+html[data-vt^="tab-"]::view-transition-old(root) { animation: none; opacity: 0; }
+html[data-vt^="tab-"]::view-transition-new(root) { animation: none; }
+html[data-vt^="tab-"]::view-transition-old(tabbar) { animation: none; opacity: 0; }
+html[data-vt^="tab-"]::view-transition-new(tabbar) { animation: none; }
+.scroll { touch-action: pan-y; }
+
+/* ---------- Type ---------- */
+.label { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 600; color: var(--ink-2); }
+.label.dim { color: var(--ink-3); }
+.numeral { font-family: var(--f-display); font-weight: 200; line-height: .95; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.title { font-family: var(--f-display); font-weight: 400; font-size: 30px; line-height: 1.12; letter-spacing: -.005em; }
+.lede { font-family: var(--f-body); font-weight: 500; font-size: 22px; line-height: 1.42; letter-spacing: .005em; max-width: 24ch; }
+.voice { font-family: var(--f-voice); font-style: italic; font-weight: 300; color: var(--ink-2); letter-spacing: .03em; }
+.small { font-size: 13px; color: var(--ink-3); }
+.rule { width: 26px; height: 1px; background: var(--ink-3); border: 0; margin: 0; }
+.hairline { height: 1px; background: var(--hair); }
+
+/* Inline stats split by slanted hairlines */
+.stats { display: flex; align-items: flex-start; }
+.stats > div { display: flex; flex-direction: column; gap: 2px; padding-right: 18px; position: relative; min-width: 0; }
+.stats > div + div { padding-left: 18px; }
+.stats > div + div::before { content: ""; position: absolute; left: 0; top: 2px; bottom: 2px; width: 1px; background: var(--hair); transform: skewX(-14deg); }
+.stats b { font-weight: 500; font-size: 17px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stats span { font-size: 12.5px; color: var(--ink-3); white-space: nowrap; }
+
+/* ---------- Controls ---------- */
+.pill {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 56px; padding: 0 28px; border-radius: 999px; font-weight: 500; font-size: 16.5px;
+  transition: transform .2s var(--ease), background .3s;
+}
+.pill:active { transform: scale(.97); }
+.pill.primary { background: var(--pearl); color: var(--pearl-ink); text-shadow: none; box-shadow: 0 16px 40px -18px var(--btn-shadow); }
+.pill.glass, .circle, .tog, .glass {
+  background: var(--glass); border: 1px solid var(--hair);
+  -webkit-backdrop-filter: blur(22px) saturate(140%); backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: inset 0 1px 0 var(--shine);
+}
+.pill.glass { color: var(--ink); }
+.pill.small { min-height: 44px; padding: 0 20px; font-size: 14.5px; }
+.pill.wide { width: 100%; }
+.pill svg { width: 18px; height: 18px; }
+.circle { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; transition: transform .2s var(--ease); }
+.circle:active { transform: scale(.94); }
+.circle svg { width: 22px; height: 22px; }
+.circle.sm { width: 44px; height: 44px; }
+.circle.sm svg { width: 19px; height: 19px; }
+.circle.solid { background: var(--pearl); color: var(--pearl-ink); border-color: var(--pearl); }
+.icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; flex-shrink: 0; }
+.icon svg { width: 24px; height: 24px; }
+.textbtn { font-size: 14px; color: var(--ink-2); padding: 10px 4px; min-height: 44px; }
+.textbtn.danger { color: var(--danger); }
+.row { display: flex; align-items: center; gap: 12px; }
+.row.between { justify-content: space-between; }
+.bottom-bar { display: flex; gap: 12px; align-items: center; padding-top: 16px; }
+.bottom-bar .pill.primary { flex: 1; }
+.bottom-bar.dock { position: sticky; bottom: calc(-20px - env(safe-area-inset-bottom, 0px)); z-index: 2; padding-top: 34px;
+  margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); margin-bottom: calc(-20px - env(safe-area-inset-bottom, 0px)); padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(180deg, var(--fade-0), var(--fade-1) 55%, var(--fade-2)); }
+
+/* Dev panel + sheet toggles */
+.tog { border-radius: 999px; padding: 9px 15px; font-size: 13.5px; color: var(--ink-2); min-height: 40px; }
+.tog[aria-pressed="true"] { background: var(--pearl); color: var(--pearl-ink); border-color: var(--pearl); text-shadow: none; }
+.toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+.roundbtn { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--glass); border: 1px solid var(--hair); }
+.roundbtn svg { width: 20px; height: 20px; }
+.btn-text { font-size: 14px; color: var(--ink-2); padding: 10px 0; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- Tab bar ---------- */
+.tabbar {
+  margin: 0 max(16px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  padding: 5px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; border-radius: 999px; flex-shrink: 0;
+  background: var(--tabbar); border: 1px solid var(--tabbar-line);
+  -webkit-backdrop-filter: blur(24px) saturate(140%); backdrop-filter: blur(24px) saturate(140%);
+}
+.tab { border-radius: 999px; padding: 8px 0 6px; display: grid; justify-items: center; gap: 2px; font-size: 11px; font-weight: 600; color: var(--ink-3); transition: background .35s var(--ease), color .35s; }
+.tab svg { width: 20px; height: 20px; }
+.tab[aria-current="page"] { background: var(--sel); color: var(--ink); }
+
+/* ---------- Home ---------- */
+.greet { font-family: var(--f-display); font-weight: 400; font-size: clamp(28px, 8cqw, 32px); line-height: 1.1; }
+.ctrlpill { display: flex; border-radius: 999px; padding: 2px; }
+.ctrlpill .icon { width: 42px; height: 40px; }
+.ctrlpill .icon svg { width: 20px; height: 20px; }
+.week { display: flex; gap: 14px; margin-top: 10px; }
+.wd { display: grid; justify-items: center; gap: 5px; font-size: 11px; letter-spacing: .06em; color: var(--ink-3); font-weight: 600; }
+.wd i { width: 7px; height: 7px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--ink-4); }
+.wd.done i { background: var(--ink); box-shadow: 0 0 10px var(--glow); }
+.wd.today { color: var(--ink); }
+.metas { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 18px; }
+.metabtn { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; font-weight: 600; color: var(--ink-2); }
+.metabtn svg { width: 13px; height: 13px; opacity: .8; }
+.metabtn.warm { color: var(--warn); pointer-events: none; }
+.hero { display: flex; flex-direction: column; gap: 0; }
+.hero .numeral { font-size: clamp(88px, 30cqw, 124px); margin-left: -6px; }
+.hero .label { margin-top: 10px; }
+.hero .lede { margin-top: 22px; }
+.hero .voice { margin-top: 6px; font-size: 15px; line-height: 1.4; max-width: 34ch; }
+/* a soft frosted pool behind the hero text: darkens and blurs the scene, then fades to nothing */
+.hero:not(.celebrate) { position: relative; isolation: isolate; }
+.hero:not(.celebrate)::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none;
+  inset: -40% calc(-1 * var(--gutter)) -16% calc(-1 * var(--gutter));
+  background: radial-gradient(110% 70% at 18% 58%, var(--pool-a), var(--pool-b) 50%, var(--pool-c) 80%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%); backdrop-filter: blur(14px) saturate(115%);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 34%, #000 80%, transparent), linear-gradient(90deg, #000 50%, transparent 96%);
+          mask-image: linear-gradient(180deg, transparent, #000 34%, #000 80%, transparent), linear-gradient(90deg, #000 50%, transparent 96%);
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
+.hero:not(.celebrate) > * { text-shadow: var(--tshadow-hero); }
+.hero + .bottom-bar { padding-top: 34px; }
+.celebrate { align-items: center; text-align: center; gap: 0; }
+.celebrate .mark { width: 54px; height: 54px; color: var(--ink); filter: drop-shadow(0 0 18px var(--glow)); }
+.celebrate .mark svg { width: 100%; height: 100%; }
+.celebrate h2 { font-family: var(--f-body); font-weight: 500; font-size: 24px; line-height: 1.4; margin-top: 22px; }
+.celebrate .week { margin-top: 30px; justify-content: center; }
+.celebrate .wd i { width: 10px; height: 10px; }
+.celebrate .small { margin-top: 18px; }
+.celebrate .pill { margin-top: 36px; }
+
+/* ---------- Practice ---------- */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; margin-inline: -10px; }
+.topbar .mid { flex: 1; text-align: center; min-width: 0; font-size: 15px; font-weight: 600; }
+.topbar .mid > .label, .topbar .mid small { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar .mid small { display: block; font-size: 12px; font-weight: 500; color: var(--ink-3); }
+.pick { display: flex; gap: 34px; align-items: flex-end; }
+.pick button { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; opacity: .5; transition: opacity .45s var(--ease); text-align: left; min-width: 0; }
+.pick button[aria-pressed="true"] { opacity: 1; }
+.pick .foot { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; min-height: 22px; }
+.pick { position: relative; padding-bottom: 16px; }
+.pick::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--hair); }
+.pick .ind { position: absolute; left: 0; bottom: -.5px; height: 2px; width: 0; border-radius: 2px; background: var(--ink); box-shadow: 0 0 12px var(--glow); z-index: 1; transition: transform .55s var(--ease), width .55s var(--ease); }
+.sugpill { display: inline-flex; align-items: center; gap: 7px; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; font-weight: 600; color: var(--ink-2); white-space: nowrap; }
+.sugpill::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--glow); box-shadow: 0 0 8px var(--glow); }
+.pick .numeral { font-size: clamp(64px, 19cqw, 80px); }
+.pick .numeral small { font-family: var(--f-body); font-size: 15px; font-weight: 500; letter-spacing: 0; margin-left: 4px; }
+.pick .cap { font-size: 13px; color: var(--ink-2); max-width: 12ch; line-height: 1.3; }
+.pick .sug { font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; font-weight: 600; color: var(--glow); }
+.sect { margin-top: 38px; display: flex; flex-direction: column; gap: 16px; }
+.plan { display: flex; flex-direction: column; }
+.plan div { display: flex; justify-content: space-between; gap: 16px; padding: 11px 0; font-size: 15px; border-top: 1px solid var(--hair); }
+.plan div:first-child { border-top: 0; padding-top: 0; }
+.plan span:last-child { color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.note { font-size: 13px; color: var(--ink-2); max-width: 40ch; }
+.note b { color: var(--ink); font-weight: 600; }
+
+/* ---------- Player ---------- */
+.ptrack { display: flex; gap: 4px; margin-top: 6px; }
+.ptrack div { height: 2px; border-radius: 2px; background: var(--track); overflow: hidden; position: relative; }
+.ptrack i { position: absolute; inset: 0 auto 0 0; background: var(--ink); }
+/* the dial is pinned at a fixed height; exercise text flows below it, so the timer never moves between exercises */
+.stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; gap: 0; min-height: 0; padding-block: clamp(14px, 6cqh, 60px) 10px; }
+.dial { position: relative; width: min(66cqw, 36cqh, 280px); aspect-ratio: 1; max-width: 100%; }
+.dial svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.dial .ring { fill: none; stroke: var(--ring); stroke-width: .5; }
+.dial .arc { fill: none; stroke: var(--arc); stroke-width: .7; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; }
+.dial .dot { fill: var(--ink); filter: drop-shadow(0 0 3px var(--dot-glow)); }
+.dial .orb { position: absolute; inset: 2%; border-radius: 50%; background: radial-gradient(circle at 50% 36%, var(--orb-a), var(--orb-b) 62%, transparent 100%); animation: fill-breathe 8s ease-in-out infinite; }
+@keyframes fill-breathe { 0%, 100% { opacity: .78; transform: scale(.985); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes breathe { 0%, 100% { transform: scale(.94); opacity: .8; } 50% { transform: scale(1.04); opacity: 1; } }
+.dial .t { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; }
+.dial .t .numeral { font-size: clamp(52px, min(17cqw, 9cqh), 76px); }
+.dial .t small { margin-top: 8px; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 600; color: var(--ink-3); }
+.ex-name { font-family: var(--f-display); font-weight: 300; font-size: clamp(26px, 8.2cqw, 34px); line-height: 1.15; max-width: 15ch; margin-top: 30px; }
+.ex-dose { margin-top: 10px; font-size: 15px; color: var(--ink-2); display: inline-flex; gap: 8px; align-items: baseline; flex-wrap: wrap; justify-content: center; }
+.ex-dose .label { color: var(--ink-3); }
+.ex-cue { margin-top: 18px; font-size: 17px; line-height: 1.45; max-width: 30ch; }
+.ex-more { margin-top: 6px; font-size: 12.5px; color: var(--ink-3); text-decoration: underline; text-underline-offset: 3px; min-height: 36px; }
+.nextline { text-align: center; font-size: 13px; color: var(--ink-3); margin-bottom: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nextline b { color: var(--ink-2); font-weight: 500; }
+.controls { display: flex; align-items: center; justify-content: center; gap: 26px; }
+.controls .circle.solid { width: 76px; height: 76px; box-shadow: 0 16px 40px -14px var(--btn-shadow); }
+.controls .circle.solid svg { width: 26px; height: 26px; }
+.pfoot { display: flex; justify-content: center; align-items: center; margin-top: 18px; }
+.pmeta { margin: 8px 0 0; text-align: right; font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; min-height: 1.4em; }
+.addtime { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; font-size: 14px; font-weight: 500; color: var(--ink-2); transition: color .2s; }
+.addtime:active { color: var(--ink); }
+.addtime svg { width: 15px; height: 15px; }
+.paused .dial .orb { animation-play-state: paused; }
+.deload-tag { color: var(--warn); }
+
+/* ---------- Check-in ---------- */
+.steps { display: flex; gap: 6px; justify-content: center; }
+.steps i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-4); transition: all .4s var(--ease); }
+.steps i.on { background: var(--ink); width: 18px; border-radius: 3px; }
+.ask { font-family: var(--f-display); font-weight: 300; font-size: clamp(30px, 9cqw, 38px); line-height: 1.12; max-width: 12ch; margin-top: 14px; }
+.feels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 34px; }
+.feels button { display: grid; justify-items: center; gap: 10px; font-size: 12.5px; color: var(--ink-2); }
+.feels .o { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); box-shadow: inset 0 0 0 1px var(--hair); transition: all .35s var(--ease); }
+.feels .o i { border-radius: 50%; background: var(--ink); opacity: .8; }
+.feels button[aria-pressed="true"] { color: var(--ink); }
+.feels button[aria-pressed="true"] .o { background: var(--soft-hi); box-shadow: inset 0 0 0 1px var(--ink), 0 0 30px -4px var(--glow); }
+.scale { display: flex; flex-direction: column; gap: 2px; margin-top: 30px; }
+.scale .row { align-items: baseline; }
+.scale .numeral { font-size: 48px; }
+.scale .numeral small { font-family: var(--f-body); font-size: 15px; letter-spacing: 0; color: var(--ink-3); margin-left: 2px; }
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 36px; background: transparent; margin: 0; }
+input[type="range"]::-webkit-slider-runnable-track { height: 2px; background: linear-gradient(90deg, var(--ink) var(--p, 50%), var(--ink-4) var(--p, 50%)); border-radius: 2px; }
+input[type="range"]::-moz-range-track { height: 2px; background: var(--ink-4); }
+input[type="range"]::-moz-range-progress { height: 2px; background: var(--ink); }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%; background: var(--pearl); margin-top: -12px; box-shadow: 0 0 0 6px var(--thumb-ring), 0 4px 14px var(--thumb-shadow); }
+input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; border-radius: 50%; background: var(--pearl); }
+.ends { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-3); }
+textarea.bare, input.bare {
+  width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--hair); border-radius: 0;
+  color: var(--ink); padding: 12px 0; font-size: 17px; line-height: 1.5; resize: none; outline: none;
+}
+textarea.bare { min-height: 110px; }
+textarea.bare:focus, input.bare:focus { border-bottom-color: var(--ink-2); }
+input.bare.num { font-family: var(--f-display); font-weight: 300; font-size: 34px; padding: 6px 0; }
+::placeholder { color: var(--ink-4); }
+.reveal { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-2); margin-top: 22px; min-height: 44px; }
+.reveal svg { width: 16px; height: 16px; transition: transform .3s var(--ease); }
+.reveal[aria-expanded="true"] svg { transform: rotate(45deg); }
+.more { display: flex; flex-direction: column; gap: 28px; margin-top: 10px; }
+.more .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.more .pair label { display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; color: var(--ink-3); }
+.help { font-size: 13px; color: var(--warn); }
+
+/* ---------- Done ---------- */
+.done-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.done-top .title { font-size: 26px; }
+.done-top .small { margin-top: 4px; }
+.done-hero, .j-hero { display: flex; flex-direction: column; align-items: flex-start; }
+.done-hero .numeral { font-size: clamp(88px, 30cqw, 124px); margin-left: -6px; }
+.done-hero .label { margin-top: 10px; }
+.done-hero .lede { margin-top: 26px; }
+.done-hero .rule { margin-top: 26px; }
+.done-hero .voice { margin-top: 18px; font-size: 15px; }
+.done-hero .stats { margin-top: 40px; }
+.share { margin-top: 26px; border-radius: 26px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; animation: rise .5s var(--ease) both; }
+.share pre { margin: 0; white-space: pre-wrap; font-family: var(--f-body); font-size: 14px; line-height: 1.55; color: var(--ink); user-select: all; -webkit-user-select: all; text-shadow: none; }
+.share .acts { display: flex; gap: 22px; }
+.share .acts a, .share .acts button { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; color: var(--ink); text-decoration: none; min-height: 40px; }
+.share .acts svg { width: 18px; height: 18px; }
+
+/* ---------- Journal ---------- */
+.page-title { font-family: var(--f-display); font-weight: 400; font-size: 30px; }
+.j-hero { margin-top: 34px; }
+.j-hero .numeral { font-size: clamp(88px, 28cqw, 116px); margin-left: -5px; }
+.j-hero .label { margin-top: 10px; }
+.j-hero .voice { margin-top: 12px; font-size: 15px; }
+.j-hero .stats { margin-top: 30px; }
+.block { margin-top: 46px; display: flex; flex-direction: column; gap: 16px; }
+.block > .row.between .label { margin: 0; }
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 8px; text-align: center; }
+.cal .dow { font-size: 10.5px; letter-spacing: .12em; color: var(--ink-3); font-weight: 600; padding-bottom: 4px; }
+.cal .day { justify-self: center; width: min(38px, 11cqw); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; font-size: 12.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.cal .day.has { background: var(--ink); color: var(--pearl-ink); font-family: var(--f-display); font-weight: 500; font-size: 13px; text-shadow: none; box-shadow: 0 0 18px -4px var(--glow); }
+.cal .day.today { box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
+.cal .day.has.today { box-shadow: 0 0 0 3px var(--today-ring); }
+.bench { display: flex; flex-direction: column; gap: 8px; }
+.bench .row { align-items: baseline; }
+.bench .numeral { font-size: 34px; font-weight: 300; }
+.bench .track { height: 2px; background: var(--ink-4); position: relative; }
+.bench .track i { position: absolute; inset: 0 auto 0 0; background: var(--ink); }
+.bench .track em { position: absolute; top: -4px; width: 1px; height: 10px; background: var(--ink-2); }
+.list { display: flex; flex-direction: column; }
+.list > * { border-top: 1px solid var(--hair); }
+.list > *:first-child { border-top: 0; }
+.ms { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; font-size: 15px; }
+.ms span:last-child { color: var(--ink-3); font-size: 13px; white-space: nowrap; }
+.logrow { display: grid; grid-template-columns: 34px 1fr auto; gap: 16px; align-items: center; padding: 14px 0; text-align: left; width: 100%; }
+.logrow .numeral { font-size: 34px; }
+.logrow .t { font-size: 15px; font-weight: 500; }
+.logrow .s { font-size: 13px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.logrow .mid { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.logrow .d { font-size: 12.5px; color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+.empty { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+.empty .voice { font-size: 20px; color: var(--ink); }
+
+/* ---------- Library ---------- */
+.ltabs { display: flex; gap: 22px; overflow-x: auto; scrollbar-width: none; margin: 22px calc(-1 * var(--gutter)) 0; padding: 0 var(--gutter); }
+.ltabs::-webkit-scrollbar { display: none; }
+.ltabs button { flex-shrink: 0; font-size: 15px; color: var(--ink-3); padding: 8px 0; position: relative; transition: color .3s; }
+.ltabs button[aria-pressed="true"] { color: var(--ink); }
+.ltabs button[aria-pressed="true"]::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--ink); }
+.lib { margin-top: 30px; display: flex; flex-direction: column; gap: 44px; }
+.lib section { display: flex; flex-direction: column; gap: 14px; }
+.lib h2 { font-family: var(--f-display); font-weight: 300; font-size: 26px; line-height: 1.15; }
+.lib p { color: var(--ink-2); max-width: 60ch; }
+.lib p b { color: var(--ink); font-weight: 600; }
+.irow { display: grid; grid-template-columns: 44px 1fr auto; gap: 14px; align-items: baseline; padding: 13px 0; text-align: left; width: 100%; }
+.irow .label { letter-spacing: .1em; color: var(--ink-2); }
+.irow .nm { font-size: 15px; }
+.irow .ds { display: block; font-size: 13px; color: var(--ink-3); margin-top: 2px; }
+.irow .r { font-size: 13px; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.irow svg { width: 15px; height: 15px; opacity: .5; align-self: center; }
+.phase-row { display: flex; flex-direction: column; gap: 10px; padding: 18px 0; }
+.phase-row .head { display: flex; align-items: baseline; gap: 14px; }
+.phase-row .head .numeral { font-size: 46px; }
+.phase-row .head .nm { font-family: var(--f-display); font-size: 21px; font-weight: 300; }
+.phase-row .head .label { margin-left: auto; }
+.kv { display: grid; grid-template-columns: 82px 1fr; gap: 6px 14px; font-size: 13.5px; margin: 0; }
+.kv dt { color: var(--ink-3); }
+.kv dd { margin: 0; color: var(--ink-2); }
+.gate { font-family: var(--f-voice); font-style: italic; font-weight: 300; font-size: 15.5px; color: var(--ink); line-height: 1.45; }
+.gate::before { content: "Gate — "; color: var(--ink-3); }
+
+/* ---------- Full-screen sheets ---------- */
+.sheetwrap {
+  position: absolute; inset: 0; z-index: 30;
+  background: var(--sheet-scrim);
+  -webkit-backdrop-filter: blur(34px) saturate(130%); backdrop-filter: blur(34px) saturate(130%);
+  animation: fade .4s var(--ease) both;
+}
+.sheet {
+  height: 100%; overflow-y: auto; scrollbar-width: none;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 28px);
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 0; max-width: 460px; margin: 0 auto;
+  text-shadow: var(--sheet-tshadow);
+}
+.sheet.closing { animation: sheet-out .3s var(--ease) both; }
+.sheet > * { animation: rise .6s var(--ease) both; }
+.sheet > *:nth-child(2) { animation-delay: 60ms; } .sheet > *:nth-child(3) { animation-delay: 120ms; } .sheet > *:nth-child(n+4) { animation-delay: 170ms; }
+@keyframes sheet-out { to { opacity: 0; transform: translateY(16px); } }
+.sheet-head { display: flex; justify-content: flex-end; min-height: 56px; margin-right: -4px; }
+.sheet h2.title { margin-top: 6px; }
+.sheet .sub { color: var(--ink-2); margin-top: 10px; max-width: 38ch; }
+.sheet .stats { margin-top: 30px; }
+.opts { margin-top: 30px; display: flex; flex-direction: column; }
+.opts > button { text-align: left; width: 100%; display: grid; grid-template-columns: 52px 1fr 24px; gap: 14px; padding: 18px 0; border-top: 1px solid var(--hair); align-items: start; opacity: .78; transition: opacity .3s; }
+.opts > button:first-child { border-top: 0; }
+.opts > button[aria-pressed="true"] { opacity: 1; }
+.opts .numeral { font-size: 44px; }
+.opts .body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.opts .nm { font-family: var(--f-display); font-size: 20px; font-weight: 300; }
+.opts .nm span { font-family: var(--f-body); font-size: 12.5px; color: var(--ink-3); margin-left: 8px; }
+.opts .drills { font-size: 12.5px; color: var(--ink-3); }
+.opts .check { width: 22px; height: 22px; margin-top: 12px; opacity: 0; }
+.opts > button[aria-pressed="true"] .check { opacity: 1; }
+.weeks { margin-top: 34px; display: flex; flex-direction: column; gap: 14px; }
+.wrow { display: grid; grid-template-columns: 1fr repeat(4, 40px); gap: 10px; align-items: center; font-size: 13px; color: var(--ink-2); }
+.wcell { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; position: relative; }
+.wcell.past { color: var(--ink); box-shadow: inset 0 0 0 1px var(--hair); }
+.wcell.now { background: var(--pearl); color: var(--pearl-ink); font-weight: 600; text-shadow: none; }
+.wcell.dl::after { content: ""; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 50%; background: var(--warn); }
+.field { display: flex; flex-direction: column; gap: 4px; margin-top: 30px; }
+input[type="date"].bare { font-family: var(--f-display); font-size: 26px; font-weight: 300; padding: 8px 0; min-height: 52px; }
+.setrows { margin-top: 26px; display: flex; flex-direction: column; }
+.setrow { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 0; border-top: 1px solid var(--hair); font-size: 15.5px; }
+.setrow:first-child { border-top: 0; }
+.setrow small { display: block; color: var(--ink-3); font-size: 13px; margin-top: 2px; }
+.switch { position: relative; width: 50px; height: 30px; border-radius: 99px; background: var(--switch); flex-shrink: 0; transition: background .3s; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--ink-2); transition: transform .3s var(--ease), background .3s; }
+.switch[aria-checked="true"] { background: var(--switch-on); }
+.switch[aria-checked="true"]::after { transform: translateX(20px); background: var(--knob-on); }
+select.bare { width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--hair); color: var(--ink); font-size: 17px; padding: 12px 28px 12px 0; appearance: none; -webkit-appearance: none; border-radius: 0; min-height: 48px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-2) 50%), linear-gradient(135deg, var(--ink-2) 50%, transparent 50%); background-position: calc(100% - 10px) 50%, calc(100% - 5px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+select.bare option { color: #222; }
+.ex-sheet .label { margin-top: 8px; }
+.ex-sheet .lede { margin-top: 22px; }
+.ex-sheet .voice { margin-top: 16px; font-size: 17px; line-height: 1.5; max-width: 32ch; }
+.confirm { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 0; }
+.confirm .sub { margin-top: 12px; }
+.confirm .stack { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; margin-top: 40px; }
+
+
+/* Phase wheel: vertical dial on the left, 16-week rail, details beside */
+.sheet > * { flex-shrink: 0; }
+.vpick { --wi: clamp(80px, 12.5cqh, 108px); display: grid; grid-template-columns: 84px 4px minmax(0, 1fr); gap: 0 18px; align-items: center; margin-top: clamp(16px, 3.5cqh, 34px); }
+.wheel {
+  position: relative; height: calc(var(--wi) * 3); overflow-y: auto; overflow-x: hidden; scrollbar-width: none;
+  display: flex; flex-direction: column; padding-block: var(--wi); scroll-snap-type: y mandatory; overscroll-behavior: contain; touch-action: pan-y;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 26%, #000 74%, transparent); mask-image: linear-gradient(180deg, transparent, #000 26%, #000 74%, transparent);
+}
+.wheel::-webkit-scrollbar { display: none; }
+.wi { flex: 0 0 var(--wi); height: var(--wi); scroll-snap-align: center; display: grid; place-items: center; position: relative; transform-origin: 60% 50%; will-change: transform, opacity; }
+.wi .numeral { font-size: calc(var(--wi) * 1.02); line-height: 1; }
+.wi.cur::before { content: ""; position: absolute; left: 0; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: var(--glow); box-shadow: 0 0 10px var(--glow); }
+.wi[aria-current="true"] .numeral { text-shadow: 0 0 40px var(--wheel-glow); }
+.ptimeline { display: grid; grid-template-rows: repeat(16, 1fr); gap: 3px; height: calc(var(--wi) * 2.4); width: 3px; }
+.ptimeline i { width: 3px; border-radius: 2px; background: var(--ink-4); transition: background .45s var(--ease), transform .45s var(--ease); position: relative; }
+.ptimeline i:nth-child(4n):not(:last-child) { margin-bottom: 6px; }
+.ptimeline i.in { background: var(--ink); transform: scaleX(1.7); box-shadow: 0 0 10px -2px var(--glow); }
+.ptimeline i.now, .ptimeline i.now.in { background: var(--glow); box-shadow: 0 0 10px var(--glow); }
+.pdetail { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.pdetail > * { transition: opacity .18s ease, transform .18s ease; }
+.pdetail.leaving > * { opacity: 0; transform: translateY(-4px); }
+.pdetail.swapin > * { animation: pswap .45s var(--ease) both; }
+.pdetail.swapin > *:nth-child(2) { animation-delay: 35ms; } .pdetail.swapin > *:nth-child(3) { animation-delay: 70ms; } .pdetail.swapin > *:nth-child(4) { animation-delay: 105ms; }
+@keyframes pswap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.pdetail .pname { font-family: var(--f-display); font-weight: 300; font-size: clamp(26px, 8cqw, 32px); line-height: 1.1; }
+.pdetail .gate { font-size: 15.5px; }
+.pact { display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 26px;
+  position: sticky; bottom: calc(-28px - env(safe-area-inset-bottom, 0px)); z-index: 2;
+  margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); margin-bottom: calc(-28px - env(safe-area-inset-bottom, 0px)); padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(180deg, var(--fade-0), var(--fade-1) 45%, var(--fade-2)); }
+.pill.is-current { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--hair); cursor: default; }
+
+
+/* Phase sheet layout: rail spans the full height on the far left; the wheel fills the screen
+   so the active number and its details sit exactly at the vertical centre. */
+.sheet.phase-sheet { position: relative; overflow: hidden; --wi: clamp(84px, 13cqh, 112px); --rail: max(18px, env(safe-area-inset-left, 0px)); --col: calc(var(--rail) + 22px); }
+.phase-sheet .sheet-head { position: relative; z-index: 4; }
+.phase-sheet > .title, .phase-sheet > .sub { position: relative; z-index: 3; pointer-events: none; margin-left: calc(var(--col) - max(var(--gutter), env(safe-area-inset-left, 0px))); }
+.phase-sheet .prail { position: absolute; z-index: 2; left: var(--rail); top: calc(env(safe-area-inset-top, 0px) + 22px); bottom: calc(env(safe-area-inset-bottom, 0px) + 22px); height: auto; gap: 4px; }
+.phase-sheet .prail2 { position: absolute; z-index: 2; left: var(--rail); width: 8px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(180deg, transparent, #000 8%, #000 92%, transparent); }
+.phase-sheet .prail2::before { content: ""; position: absolute; left: 1px; top: 0; bottom: 0; width: 1px; background: var(--hair); }
+.phase-sheet .pseg { position: absolute; left: 0; top: 0; width: 3px; display: flex; flex-direction: column; gap: 3px; transform-origin: 0 50%; will-change: transform, height, opacity; }
+.phase-sheet .pseg i { flex: 1; min-height: 2px; border-radius: 2px; background: var(--ink); }
+.phase-sheet .pseg i.now { background: var(--glow); box-shadow: 0 0 8px var(--glow); }
+.phase-sheet .wheel {
+  position: absolute; z-index: 1; top: 0; bottom: 0; left: var(--col); right: 0; height: auto; margin: 0;
+  padding-block: calc(50cqh - var(--wi) / 2);
+  -webkit-mask-image: linear-gradient(180deg, transparent 18%, #000 40%, #000 60%, transparent 82%); mask-image: linear-gradient(180deg, transparent 18%, #000 40%, #000 60%, transparent 82%);
+}
+.phase-sheet .wi { width: 100%; place-items: center start; padding-left: 14px; transform-origin: 0 50%; transition: transform .16s linear, opacity .16s linear, filter .16s linear; }
+.phase-sheet .wheel { scroll-behavior: smooth; }
+.phase-sheet .wi { scroll-snap-stop: always; }
+.phase-sheet .wi.cur::before { left: 0; }
+.phase-sheet .pdetail { position: absolute; z-index: 2; pointer-events: none; top: 0; bottom: 0; left: calc(var(--col) + 14px + var(--wi) * .78); right: max(var(--gutter), env(safe-area-inset-right, 0px)); justify-content: center; }
+.phase-sheet .pact { position: absolute; z-index: 3; left: 0; right: 0; bottom: 0; margin: 0; padding: 40px max(var(--gutter), env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 16px) var(--col); }
+
+
+/* ---------- Onboarding ---------- */
+.obbar { display: flex; gap: 4px; justify-content: center; }
+.obbar i { width: 22px; height: 3px; border-radius: 2px; background: var(--ink-4); transition: background .45s var(--ease); }
+.obbar i.on { background: var(--ink); }
+.oblist { margin-top: 30px; display: flex; flex-direction: column; }
+.oblist button { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 2px; min-height: 58px; border-top: 1px solid var(--hair); text-align: left; font-size: 16.5px; color: var(--ink-2); transition: color .3s; }
+.oblist button:first-child { border-top: 0; }
+.oblist button > span { display: flex; flex-direction: column; gap: 4px; }
+.oblist b { font-weight: 500; }
+.oblist em { font-style: normal; }
+.oblist small { font-size: 13px; color: var(--ink-3); line-height: 1.4; }
+.oblist i { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; box-shadow: inset 0 0 0 1.5px var(--ink-4); transition: box-shadow .35s var(--ease); }
+.oblist [aria-pressed="true"] { color: var(--ink); }
+.oblist [aria-pressed="true"] i { box-shadow: inset 0 0 0 7px var(--ink); }
+.obwhy { margin-top: 26px; display: flex; flex-direction: column; gap: 12px; max-width: 38ch; }
+.obwhy p { font-size: 15px; color: var(--ink-2); line-height: 1.5; }
+.ob .ob-hero .label { margin-top: 0; }
+
+/* ---------- Toast + dev ---------- */
+.toast { position: absolute; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 18px); transform: translateX(-50%); z-index: 80; padding: 10px 18px; border-radius: 999px; font-size: 13.5px; font-weight: 500; white-space: nowrap; animation: rise .4s var(--ease) both; background: var(--toast); border: 1px solid var(--hair); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); }
+.devfab {
+  position: absolute; z-index: 60; left: env(safe-area-inset-left, 0px); top: 46%;
+  width: 22px; padding: 10px 0; writing-mode: vertical-rl; border-radius: 0 10px 10px 0;
+  border: 1px dashed rgba(255,255,255,.55); border-left: 0;
+  background: rgba(20,18,32,.55); color: var(--ink); font: 600 10.5px/1 var(--f-body); letter-spacing: .14em;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.devfab, #devpanel { --ink: #fbf8f5; --ink-2: rgba(251,248,245,.74); --ink-3: rgba(251,248,245,.5); --hair: rgba(255,255,255,.2); --glass: rgba(255,255,255,.14); --shine: rgba(255,255,255,.16); --pearl: #fffaf4; --pearl-ink: #4b4955; color: var(--ink); color-scheme: dark; }
+.devfab.sample { border-style: solid; border-color: var(--warn); color: var(--warn); }
+#devpanel { position: absolute; inset: 0; z-index: 70; display: flex; align-items: flex-end; background: rgba(10,10,18,.35); }
+#devpanel .dp {
+  width: 100%; max-width: 460px; margin: 0 auto; max-height: 78%; overflow-y: auto;
+  background: rgba(24, 23, 34, .94); border-top: 1px dashed rgba(255,255,255,.35); border-radius: 22px 22px 0 0;
+  padding: 14px max(16px, env(safe-area-inset-right, 0px)) max(18px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  display: flex; flex-direction: column; gap: 14px; font-size: 13px; animation: rise .3s var(--ease) both;
+}
+.dp-head { display: flex; justify-content: space-between; align-items: center; }
+.dp-head b { font: 600 11px/1 var(--f-body); letter-spacing: .16em; }
+.dp-group { display: flex; flex-direction: column; gap: 8px; }
+.dp-group > span { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+.dp-group .toggles { gap: 6px; }
+.dp-group .tog { padding: 7px 11px; font-size: 12.5px; min-height: 34px; }
+.dp-note { font-size: 12px; color: var(--ink-3); }
+
+/* ---------- Shorter and narrower phones ---------- */
+@container (max-height: 760px) {
+  .hero .numeral, .done-hero .numeral, .j-hero .numeral { font-size: clamp(72px, 24cqw, 100px); }
+  .hero .lede, .done-hero .lede { margin-top: 16px; font-size: 20px; }
+  .done-hero .rule { margin-top: 18px; }
+  .hero + .bottom-bar { padding-top: 24px; }
+  .ex-name { margin-top: 22px; }
+  .ex-cue { margin-top: 12px; font-size: 16px; }
+  .controls { gap: 20px; }
+  .controls .circle.solid { width: 68px; height: 68px; }
+  .sect { margin-top: 28px; }
+  .done-hero .stats { margin-top: 26px; }
+  .feels { margin-top: 24px; }
+  .scale { margin-top: 18px; }
+  .scale .numeral { font-size: 40px; }
+}
+@container (max-height: 620px) {
+  .week { display: none; }
+  .hero .voice, .done-hero .voice, .ex-cue { display: none; }
+  .hero .numeral, .done-hero .numeral { font-size: 68px; }
+  .pick .numeral { font-size: 54px; }
+  .plan div { padding: 8px 0; font-size: 14px; }
+  .celebrate .pill { margin-top: 24px; }
+  .celebrate .mark { width: 42px; height: 42px; }
+  .celebrate h2 { font-size: 21px; margin-top: 16px; }
+  .celebrate .week { margin-top: 20px; }
+}
+@container (max-width: 340px) {
+  .scroll, .overlay, .sheet { --gutter: 20px; }
+  .stats > div { padding-right: 12px; } .stats > div + div { padding-left: 12px; }
+  .stats b { font-size: 15.5px; }
+  .pick { gap: 24px; }
+  .feels .o { width: 46px; height: 46px; }
+  .controls { gap: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
+}
+</style>
+</head>
+<body>
+<div id="device" data-mood="home" data-mode="light">
+<canvas id="sea" aria-hidden="true"></canvas>
+<div id="tint" aria-hidden="true"></div>
+<div id="veil" aria-hidden="true"></div>
+
+<div class="app">
+  <main class="scroll" id="scroll">
+    <section class="view" id="v-home" aria-label="Today"></section>
+    <section class="view" id="v-journal" aria-label="Progress" hidden></section>
+    <section class="view" id="v-library" aria-label="Library" hidden></section>
+  </main>
+  <nav class="tabbar" aria-label="Main">
+    <button class="tab" data-tab="home" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="9" r="4"/><path d="M3 18c3-2 6-2 9 0s6 2 9 0"/></svg>Today</button>
+    <button class="tab" data-tab="journal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="13.5" cy="4.3" rx="2.6" ry="1.75" transform="rotate(-16 13.5 4.3)"/><ellipse cx="11.2" cy="8.35" rx="3.7" ry="1.95" transform="rotate(9 11.2 8.35)"/><ellipse cx="13.0" cy="12.9" rx="5.1" ry="2.25" transform="rotate(-6 13.0 12.9)"/><ellipse cx="11.5" cy="18.7" rx="7.1" ry="2.75" transform="rotate(3 11.5 18.7)"/></svg>Progress</button>
+    <button class="tab" data-tab="library">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.2" y="5.8" width="3.6" height="14.4" rx="1.3"/><rect x="9.2" y="4.6" width="3.8" height="15.6" rx="1.3"/><rect x="16.3" y="6.1" width="3.8" height="13.4" rx="1.3" transform="rotate(-11 20.1 19.5)"/></svg>Library</button>
+  </nav>
+</div>
+
+<div id="overlay" class="overlay" hidden></div>
+<div id="sheetwrap" class="sheetwrap" hidden></div>
+<div id="devpanel" hidden></div>
+</div>
+<p class="desk-note">Made for your phone. Open this link on mobile and add it to your home screen.</p>
+
+<script>
+/* ================= Program data (from the Press Handstand Training Plan) ================= */
+const EX = {
+  C1:{n:'Seated pike leg lifts',d:'3–4 × 8–10, hold last rep 10 s',c:'Hands beside knees, knees locked, lift heels without leaning back.'},
+  C2:{n:'Seated straddle leg lifts',d:'3 × 8–10',c:'Hands between or in front of legs; lift both heels, toes pointed.'},
+  C3:{n:'Straddle sit / L-sit holds',d:'4 × 10–20 s',c:'Push the floor away, shoulders depressed, hips lifted. Floor or parallettes.'},
+  C4:{n:'Compression pulses',d:'3 × 10',c:'Fold forward, then actively pull the chest further down with the hip flexors. No hands.'},
+  C5:{n:'Straddle-ups / V-ups',d:'3 × 6–10',c:'Slow, toes to bar or hands; curl the pelvis at the top.'},
+  C6:{n:'Hollow body hold',d:'3 × 20–30 s',c:'Lower back glued down, ribs in.'},
+  S1:{n:'Pike push-ups → box pike push-ups',d:'3–4 × 5–10',c:'Head travels in front of the hands, elbows track back.'},
+  S2:{n:'Planche leans / pseudo-planche push-ups',d:'4 × 15–20 s lean or 4 × 5',c:'Straight arms, shoulders past wrists, protract hard.'},
+  S3:{n:'Box pike handstand hold',d:'3 × 20–30 s',c:'Hips stacked over shoulders, push tall through the ears.'},
+  S4:{n:'Chest-to-wall walk-downs',d:'3 × 3–5',c:'From chest-to-wall, walk the hands out while the shoulders lean forward. Hips stay over hands as long as possible.'},
+  S5:{n:'Wall walks',d:'3 × 3–5',c:'Full vertical at the top, slow descent.'},
+  S6:{n:'Wall handstand push-up negatives',d:'3 × 3–5',c:'3–5 s lowers, head to a pad. Eccentric first.'},
+  S7:{n:'Straight-arm front raise',d:'3 × 10–12',c:'Locked elbows, raise to overhead. Mimics the press’s shoulder flexion. Dumbbell or plate.'},
+  P1:{n:'Elevated straddle press',d:'5–8 singles',c:'Feet on a 30–50 cm box. Shoulders lean first, then the hips float.'},
+  P2:{n:'Wall-assisted straddle press negatives',d:'4–6 reps',c:'Back or chest to wall. Lower in 3–5 s to soft feet.'},
+  P3:{n:'Freestanding straddle press negatives',d:'4–6 reps',c:'The gold standard. Lower as slowly as you can.'},
+  P4:{n:'Partial negatives',d:'3 × 2–3',c:'Lower until the hips start to drop, then press back to vertical.'},
+  P5:{n:'Headstand straddle / pike leg raises',d:'3 × 5',c:'Lower the legs until the toes touch, lift back to vertical. Builds hip-over-shoulder control.'},
+  P6:{n:'Toe taps / tip-toe press pulls',d:'3 × 3–5',c:'Hands on the floor, feet in straddle. Lean until the feet get light; hover 1–2 s.'},
+  P7:{n:'Tuck handstand ↔ handstand',d:'3 × 3–5',c:'Freestanding or with heels near the wall. Hips stay stacked.'},
+  P8:{n:'Jumping straddle press',d:'5 singles',c:'Minimal hop; slow the top half. A pattern drill only.'},
+  P9:{n:'Full straddle press attempts',d:'3–5 attempts, fresh',c:'Dead stop, no momentum. Stop when quality drops.'},
+};
+const CATS = [
+  {k:'C',n:'Compression',p:'Active hip-flexor and lower-ab strength to pull the legs to the chest, plus the pike and pancake flexibility that makes it cheaper.'},
+  {k:'S',n:'Straight-arm shoulder strength',p:'Leaning the shoulders past the hands to counterbalance the hips as they rise, without bending the elbows.'},
+  {k:'P',n:'Skill and balance',p:'Finding the lean, timing the hip lift, and stacking into the handstand without momentum.'},
+];
+const PHASES = {
+  1:{n:'Foundation',w:'1–4',A:[['P5','3 × 5']],C:[['P7','Tuck handstand holds · 4 × 10 s']],BD:[['P2','4 × 1']],str:'Floor pike push-ups; planche leans 15 s',gate:'60 s chest-to-wall; 3 s controlled wall negative; C1 × 8'},
+  2:{n:'Lowering',w:'5–8',A:[['P2','5 × 1, 4–5 s each']],C:[['P1','High box · 5 singles']],BD:[['P3','5 × 1']],str:'Box pike push-ups; leans 20 s; add S4 walk-downs',gate:'Freestanding negative with feet landing softly near the hands; elevated press from a high box'},
+  3:{n:'Pressing',w:'9–12',A:[['P4','3 × 2']],C:[['P1','Lower box · 6 singles']],BD:[['P3','4 × 1'],['P6','3 × 3']],str:'Wall HSPU eccentrics; S7 front raise; harder C5',gate:'5 s freestanding negative; toes leave the floor on a P6 hover'},
+  4:{n:'Full press',w:'13–16',A:[['P9','5 × 1']],C:[['P3','Slow · 4 × 1'],['P6','Toe taps · 3 × 3']],BD:[['P9','6–10 singles, autoregulated'],['P1','Extra volume']],str:'Maintain; cut strength volume ~25% so you’re fresh for attempts',gate:'First dead-stop straddle press. Then start pike press negatives.'},
+};
+const META = {
+  A:{n:'Press drills + compression',len:15,day:'Mon',dow:1,focus:'Skill (negatives, press pattern) + compression'},
+  B:{n:'Strength + drills',len:45,day:'Tue',dow:2,focus:'Shoulder strength, handstand volume, compression strength'},
+  C:{n:'Press drills + compression',len:15,day:'Thu',dow:4,focus:'Skill + compression, different drills than A'},
+  D:{n:'Strength + drills',len:45,day:'Sat',dow:6,focus:'Straight-arm strength, press volume, attempts'},
+};
+const BENCH = [
+  {n:'Chest-to-wall handstand',how:'Best hold, belly to wall, hands ~10 cm out',s:'45 s',t:'90 s'},
+  {n:'Freestanding handstand',how:'Best of 3 attempts',s:'5–10 s',t:'20 s+ in 1–3 tries'},
+  {n:'Pike fold',how:'Seated, legs straight',s:'Fingertips to toes',t:'Palms flat past feet / chest near thighs'},
+  {n:'Straddle (pancake) fold',how:'Seated, legs wide',s:'Forearms toward floor',t:'Chest near floor'},
+  {n:'Seated pike leg lift',how:'Hands beside knees, lift both heels',s:'Heels hover 1 s',t:'10 lifts, last held 10 s'},
+  {n:'Tuck handstand (stacked)',how:'Freestanding or toes lightly on wall',s:'Not yet',t:'10 s with hips over shoulders'},
+  {n:'Wall handstand negative (straddle)',how:'Time from vertical to feet touching floor',s:'Any controlled lower',t:'5 s, feet land softly near hands'},
+];
+const MISTAKES = [
+  ['Bending the elbows to get up','Go back to an easier drill (higher box, wall) and keep the arms straight from day one.'],
+  ['Hips start too low or behind the shoulders','Walk the feet in and stack hips over shoulders before pressing.'],
+  ['Not leaning the shoulders forward','Think “shoulders over fingertips”; dig the fingers into the floor to stop over-balancing.'],
+  ['Jumping instead of pressing','Pause 1 s on the toes before lifting; any hop turns it into a different skill.'],
+  ['Stretching but never training active compression','Do C1–C4 every session; passive flexibility alone won’t lift the legs.'],
+  ['Skipping handstand work','Keep 3–5 min inverted per strength day; the press finishes in a handstand.'],
+];
+const MILESTONES = ['45 s chest-to-wall','60 s chest-to-wall','90 s chest-to-wall','First 10 s freestanding','20 s freestanding','10 s stacked tuck handstand','3 s controlled wall negative','5 s freestanding negative','Toes leave floor on a P6 hover','Elevated press from a high box','First dead-stop straddle press','Filmed a set from the side'];
+const CUES = [
+  'Shoulders over fingertips.','Lower as slowly as you can.','Push the floor away.','Quality over count.',
+  'Elbows locked, every rep.','Pause on the toes. No hop.','Stack the hips before you press.','Let the hips float.',
+];
+const FEELS = [['Rough',6],['Heavy',10],['Steady',14],['Light',18],['Flowing',24]];
+const PAINS = ['Wrists','Shoulders','Elbows'];
+
+/* Each session becomes a list of timed steps. The 45-minute sessions compress the plan's 45–60 min blocks to fit 45. */
+function buildSteps(key, phase){
+  const ph = PHASES[phase], st = [];
+  const add = (block, o) => st.push(Object.assign({block}, o));
+  const ex = (code, dose, dur, extra) => ({code, name:EX[code].n, dose, cue:EX[code].c + (extra ? ' ' + extra : ''), dur});
+  const prep = blk => {
+    add(blk,{name:'Wrist rocks',dose:'Forward and back',cue:'Ease the wrists through their range. Always warm them up before loading.',dur:40});
+    add(blk,{name:'Puppy-pose pumps',dose:'10 reps',cue:'Sink the chest toward the floor, then press back up.',dur:40});
+    add(blk,{name:'Scap push-ups',dose:'10 reps',cue:'Arms straight. Let the shoulder blades meet, then push the floor away.',dur:40});
+  };
+  const press = (blk, drills, total, note) => drills.forEach(([c,d]) => add(blk, ex(c, d, Math.round(total/drills.length), note)));
+  const warm45 = () => {
+    const b = 'Warm-up';
+    add(b,{name:'Wrist prep',dose:'Rocks + 10 puppy-pose pumps',cue:'Wrists take the most load. Warm them fully.',dur:60});
+    add(b,{name:'Cat-cow',dose:'Slow, with the breath',cue:'Move one segment of the spine at a time.',dur:45});
+    add(b,{name:'Scap push-ups',dose:'10 reps',cue:'Arms straight. Let the shoulder blades meet, then push away.',dur:45});
+    add(b, ex('C6','2 × 30 s',90));
+    add(b, ex('S5','1–2 reps',120));
+  };
+  if (key === 'A' || key === 'C') {
+    prep('Wrist + shoulder prep');
+    if (key === 'A') {
+      add('Handstand primer',{name:'Handstand hold',dose:'Attempt 1 of 2 · 20–30 s',cue:'Chest-to-wall or freestanding. Rest for the rest of the minute.',dur:60});
+      add('Handstand primer',{name:'Handstand hold',dose:'Attempt 2 of 2 · 20–30 s',cue:'Push tall through the ears. Rest for the rest of the minute.',dur:60});
+      press('Press block', ph.A, 360, 'Rest 30–45 s between reps.');
+      add('Compression', ex('C1','3 × 8',150,'Back to back with C4, 20 s rest.'));
+      add('Compression', Object.assign(ex('C4','Pancake pulses · 2 × 10',150)));
+    } else {
+      add('Balance primer', ex('P7','2–3 tuck handstand attempts',120));
+      press('Press block', ph.C, 360, 'Quality over count.');
+      add('Compression', ex('C2','3 × 8',150));
+      add('Compression', ex('C3','3 × 10–15 s',150));
+    }
+  } else if (key === 'B') {
+    warm45();
+    add('Handstand practice',{name:'Handstand practice',dose:'Aim for 3–5 min total inverted',cue:'Freestanding attempts or chest-to-wall holds. Rest whenever the line slips.',dur:480});
+    press('Press skill', ph.BD, 480, '4–6 quality reps.');
+    const s1 = phase === 1 ? 'Floor pike push-ups' : 'Box pike push-ups', lean = phase === 1 ? '15 s' : '20 s';
+    const cut = phase === 4 ? ' Volume cut ~25% this phase.' : '';
+    for (let r = 1; r <= 4; r++) {
+      add('Shoulder strength', Object.assign(ex('S1','Round '+r+' of 4 · 5–8 reps',90, cut), {name:s1}));
+      add('Shoulder strength', Object.assign(ex('S2','Round '+r+' of 4 · lean '+lean,90), {name:'Planche leans'}));
+    }
+    add('Compression strength', ex('C5', phase >= 3 ? '3 × 6–8 · harder variation' : '3 × 6–8', 180));
+    add('Compression strength', ex('C1','3 × 10',180));
+    add('Flexibility',{name:'Pike fold',dose:'2 × 60 s',cue:'Active pulses between holds. Pull the chest down with the hip flexors.',dur:150});
+    add('Flexibility',{name:'Pancake fold',dose:'2 × 60 s',cue:'Legs wide, active pulses between holds.',dur:150});
+  } else {
+    warm45();
+    add('Handstand practice',{name:'Freestanding practice',dose:'Holds and attempts',cue:'Keep 3–5 min inverted today. The press finishes in a handstand.',dur:270});
+    add('Handstand practice', ex('P7','3 tuck ↔ straight transitions',150));
+    press('Press skill', ph.BD, 600, phase >= 3 ? 'Full attempts go here, while fresh.' : '');
+    const useS6 = phase >= 3, cut = phase === 4 ? ' Volume cut ~25% this phase.' : '';
+    for (let r = 1; r <= 3; r++) {
+      add('Straight-arm strength', useS6 ? ex('S6','Round '+r+' of 3 · 3–5 reps',90,cut) : ex('S3','Round '+r+' of 3 · 20–30 s',90,cut));
+      add('Straight-arm strength', ex('S4','Round '+r+' of 3 · 3 reps',90));
+    }
+    add('Straight-arm strength', ex('S7','2 × 12, light',180));
+    add('Compression + flexibility', ex('C3','4 × 15 s',180));
+    add('Compression + flexibility', Object.assign(ex('C4','Straddle pulses · 3 × 10',180)));
+    add('Compression + flexibility',{name:'Pancake stretch',dose:'2 × 60 s',cue:'Breathe into the fold. Keep the legs active.',dur:240});
+  }
+  return st;
+}
+function blocksOf(steps){
+  const out = [];
+  steps.forEach(s => { const l = out[out.length-1]; if (l && l.name === s.block) l.dur += s.dur; else out.push({name:s.block, dur:s.dur}); });
+  return out;
+}
+
+/* ================= Scenes ================= */
+/* Quiet surrealism: haze-banded sky, sweeping sand, a satin sphere floating over still water.
+   Every theme shares the same geometry; only the colours change. */
+/* Everyday light palettes: near-white, tonal, one faint hue per theme. */
+const SCENES = {
+  A:{ sky:['#e9e2e6','#f2ebe9','#f8f2ee'], sun:'#fffaf4', haze:['#ffffff','#d9cfd3'], dune:['#e7dcdb','#d8cbcc'], rim:'#fffaf6',
+    pearl:['#f1ebea','#f0d3da','#d3e5e3','#ffffff'], water:['#ece5e5','#d3c8cb'], mote:'#b8a49a', shade:'#ffffff', shadeA:.45, light:true },
+  B:{ sky:['#e1e6eb','#ecf0f2','#f6f7f6'], sun:'#ffffff', haze:['#ffffff','#cfd6dd'], dune:['#dde2e5','#ccd3d8'], rim:'#ffffff',
+    pearl:['#eef1f4','#d9def2','#d2e8ea','#ffffff'], water:['#e6eaed','#c8d0d6'], mote:'#9aa6b1', shade:'#ffffff', shadeA:.45, light:true },
+  C:{ sky:['#e6e3dc','#efece5','#f6f3ec'], sun:'#fffdf6', haze:['#ffffff','#d6d1c6'], dune:['#e3ddd2','#d4cdc0'], rim:'#fffcf4',
+    pearl:['#f2efe8','#efe1d0','#dce7df','#ffffff'], water:['#ebe7df','#d0c9bd'], mote:'#ab9f8d', shade:'#ffffff', shadeA:.45, light:true },
+  D:{ sky:['#ece0da','#f4e9e3','#f9f0ea'], sun:'#fff6ee', haze:['#ffffff','#dccbc3'], dune:['#ead9d1','#dcc7bf'], rim:'#fff7ef',
+    pearl:['#f4ebe7','#f2d2c8','#efdcc8','#ffffff'], water:['#efe4df','#d7c5be'], mote:'#bf9d8a', shade:'#ffffff', shadeA:.45, light:true },
+  N:{ sky:['#e2e2ea','#ecebf1','#f5f4f7'], sun:'#ffffff', haze:['#ffffff','#d0d0dc'], dune:['#dedde6','#cecdd9'], rim:'#ffffff',
+    pearl:['#efeff4','#dcdcf2','#dde4ee','#ffffff'], water:['#e7e7ee','#c9c9d6'], mote:'#a09fb3', shade:'#ffffff', shadeA:.45, light:true },
+  M:{ sky:['#e3e6de','#edefe8','#f5f6f0'], sun:'#fffff6', haze:['#ffffff','#d0d6c9'], dune:['#dfe3d6','#ced5c5'], rim:'#fffff4',
+    pearl:['#eff1ea','#e9e5cf','#d6e6da','#ffffff'], water:['#e8ebe3','#cad1c1'], mote:'#9ea891', shade:'#ffffff', shadeA:.45, light:true },
+};
+/* Workout palettes: the same scene after dark. Keys get a ".d" suffix, e.g. "A.d". */
+const SCENES_DARK = {
+  A:{ // Dawn: dusty mauve and sand
+    sky:['#5f5470','#a8909f','#d9b9ad'], sun:'#f3d2bd', haze:['#ecd3c9','#8e7a8c'], dune:['#b99a9c','#987c8a'], rim:'#f6d6c2',
+    pearl:['#cdbfc8','#f0b9c4','#9fc8c6','#fff4ee'], water:['#8f7c8e','#3e3647'], mote:'#f8e3d3' },
+  B:{ // Tide: slate fog
+    sky:['#3f4f63','#7d8ea0','#c3c9cc'], sun:'#e8ecee', haze:['#e1e7ea','#6c7c8e'], dune:['#9aa4ac','#78848f'], rim:'#f1f3f2',
+    pearl:['#c2cad1','#b8c4e6','#a6d2d4','#ffffff'], water:['#6e7d8c','#27313d'], mote:'#eef2f4' },
+  C:{ // Mist: warm stone
+    sky:['#5e5f58','#a3a196','#d8d2c4'], sun:'#f2eadb', haze:['#ece6d9','#85847a'], dune:['#bbb2a2','#999180'], rim:'#f6eedf',
+    pearl:['#d2cec4','#e6d2bc','#bcd0c6','#fffaf1'], water:['#8b897f','#3b3b36'], mote:'#f7f1e4' },
+  D:{ // Dusk: plum and terracotta
+    sky:['#2f2236','#6e4655','#c27a67'], sun:'#f0a984', haze:['#dc9d88','#5a3a4b'], dune:['#9a6560','#784b50'], rim:'#f6b38f',
+    pearl:['#b48f93','#e79a8c','#d6b28c','#ffe6d6'], water:['#5c3e4a','#1e1520'], mote:'#f8cdb3' },
+  N:{ // Night: ink and silver
+    sky:['#0f141f','#26304a','#4f5a78'], sun:'#aab6d6', haze:['#7d89aa','#1f2738'], dune:['#3b4359','#283043'], rim:'#c2cbe4',
+    pearl:['#cfd5e6','#9fb0de','#b9c6d8','#ffffff'], water:['#262e44','#090c14'], mote:'#dfe6f8' },
+  M:{ // Moss: eucalyptus and olive
+    sky:['#2b352e','#5f6f5e','#a7ac93'], sun:'#e9e2c0', haze:['#d1d4ba','#4b5848'], dune:['#8c8f73','#6a7159'], rim:'#efe7c4',
+    pearl:['#bcc4b2','#d8cf9e','#a9c6b4','#fbf8ea'], water:['#5a6656','#1b221c'], mote:'#efeccf' },
+};
+const palette = k => k.endsWith('.d') ? SCENES_DARK[k[0]] : SCENES[k];
+const DARK_MOODS = { player:1, checkin:1 };
+const MOOD_HORIZON = { home:.56, practice:.5, player:.52, checkin:.6, done:.6, journal:.42, library:.48 };
+const MOOD_DUST = { home:.35, practice:.25, player:.9, checkin:.6, done:.5, journal:.3, library:.3 };
+
+/* ================= State & storage ================= */
+const LS = 'stillpoint.v1';
+const todayISO = () => isoDate(new Date());
+function isoDate(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function parseISO(s){ const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+function dayDiff(a, b){ return Math.round((parseISO(b) - parseISO(a)) / 864e5); }
+
+let S = { profile:{ startDate: todayISO(), phase: 0, voice: true, chime: true, voiceName: '', rate: .92, goal: 4, onboarded: false, assess: null }, sessions: [] };
+try { const raw = localStorage.getItem(LS); if (raw) { const p = JSON.parse(raw); S.profile = Object.assign(S.profile, p.profile || {}); S.sessions = p.sessions || []; } } catch (e) {}
+let remote = null, synced = false;
+/* Dev preview: while DEV.real holds the user's data, S is a throwaway sample and nothing is saved. */
+const DEV = { real: null, speed: 1, sample: 'real' };
+
+function saveLocal(){ if (DEV.real) return; try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {} }
+async function putRemote(id, data){ if (!remote) return; try { await remote.doc(id).set(JSON.parse(JSON.stringify(data))); } catch (e) {} }
+async function delRemote(id){ if (!remote) return; try { await remote.doc(id).delete(); } catch (e) {} }
+function saveProfile(){ if (DEV.real) return; saveLocal(); putRemote('profile', Object.assign({kind:'profile'}, S.profile)); }
+function saveSession(rec){
+  const i = S.sessions.findIndex(s => s.id === rec.id);
+  if (i >= 0) S.sessions[i] = rec; else S.sessions.push(rec);
+  S.sessions.sort((a,b) => a.ts - b.ts);
+  if (rec.dev && !DEV.real) { S.sessions = S.sessions.filter(s => s !== rec); return; }
+  if (DEV.real) return;
+  saveLocal(); putRemote(rec.id, Object.assign({kind:'session'}, rec));
+}
+function deleteSession(id){ S.sessions = S.sessions.filter(s => s.id !== id); if (DEV.real) return; saveLocal(); delRemote(id); }
+
+(async function initRemote(){
+  if (!window.claude || !window.claude.use) return;
+  try {
+    const [db, user] = await Promise.all([claude.use('db'), claude.use('user')]);
+    if (user) user.isOwner().then(o => { if (o) showDevFab(); }).catch(() => {});
+    if (!db || !user) return;
+    const uid = await user.id(); if (!uid) return;
+    remote = db.collection('data/users/' + uid);
+    const snap = await remote.get();
+    const R = DEV.real || S;
+    let remoteProfile = null; const byId = new Map(R.sessions.map(s => [s.id, s]));
+    const remoteIds = new Set();
+    snap.docs.forEach(d => {
+      const v = d.data(); if (!v) return;
+      if (d.id === 'profile') remoteProfile = v;
+      else if (v.kind === 'session') { remoteIds.add(d.id); const c = Object.assign({}, v); delete c.kind; byId.set(d.id, c); }
+    });
+    // push anything saved only on this device
+    R.sessions.forEach(s => { if (!remoteIds.has(s.id)) putRemote(s.id, Object.assign({kind:'session'}, s)); });
+    R.sessions = [...byId.values()].sort((a,b) => a.ts - b.ts);
+    if (remoteProfile) { const p = Object.assign({}, remoteProfile); delete p.kind; R.profile = Object.assign(R.profile, p); }
+    else putRemote('profile', Object.assign({kind:'profile'}, R.profile));
+    synced = true;
+    if (!DEV.real) { saveLocal(); renderAll(); }
+    if (OB && !OB.edit && S.profile.onboarded) { OB = null; closeOverlay(); renderAll(); }   // already set up on another device
+  } catch (e) { remote = null; }
+})();
+
+/* ================= Program math ================= */
+function programWeek(){ return Math.max(1, Math.floor(dayDiff(S.profile.startDate, todayISO()) / 7) + 1); }
+function currentPhase(){ return S.profile.phase || Math.min(4, Math.ceil(programWeek() / 4)); }
+function isDeload(){ const w = programWeek(); return w <= 16 && w % 4 === 0; }
+
+function lastOf(key){ for (let i = S.sessions.length - 1; i >= 0; i--) if (S.sessions[i].key === key) return S.sessions[i]; return null; }
+/* The rotation follows the weekly goal: 2 days A·B, 3 days A·B·D, 4 days A·B·C·D. */
+function suggestNext(){
+  const rot = ROTATION[weeklyGoal()], last = S.sessions[S.sessions.length - 1];
+  if (!last) return rot[0];
+  for (let i = 1; i <= 4; i++) { const k = 'ABCD'[('ABCD'.indexOf(last.key) + i) % 4]; if (rot.includes(k)) return k; }
+  return rot[0];
+}
+function suggestFor(len){
+  const next = suggestNext();
+  if (META[next].len === len) return next;
+  const inRot = (len === 15 ? ['A','C'] : ['B','D']).filter(k => ROTATION[weeklyGoal()].includes(k));
+  if (inRot.length === 1) return inRot[0];
+  const [x, y] = len === 15 ? ['A','C'] : ['B','D'];
+  const lx = lastOf(x), ly = lastOf(y);
+  if (!lx) return x; if (!ly) return y;
+  return lx.ts <= ly.ts ? x : y;
+}
+function streakInfo(){
+  const days = [...new Set(S.sessions.map(s => s.date))].sort();
+  if (!days.length) return {cur:0, best:0};
+  let best = 1, run = 1;
+  const gap = weeklyGoal() >= 3 ? 3 : 4;   // fewer practice days allow longer rests between sessions
+  for (let i = 1; i < days.length; i++) { run = dayDiff(days[i-1], days[i]) <= gap ? run + 1 : 1; best = Math.max(best, run); }
+  const alive = dayDiff(days[days.length-1], todayISO()) <= gap;
+  return {cur: alive ? run : 0, best};
+}
+function weekStart(d){ const x = new Date(d); const off = (x.getDay() + 6) % 7; x.setDate(x.getDate() - off); return isoDate(x); }
+function thisWeek(){ const ws = weekStart(new Date()); return S.sessions.filter(s => s.date >= ws); }
+function fmtClock(sec){ sec = Math.max(0, Math.ceil(sec)); return Math.floor(sec/60) + ':' + String(sec % 60).padStart(2,'0'); }
+function fmtMins(sec){ const m = Math.round(sec/60); return m >= 60 ? Math.floor(m/60) + 'h ' + (m % 60) + 'm' : m + ' min'; }
+function niceDate(iso){ return parseISO(iso).toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'}); }
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = s => document.querySelector(s);
+
+/* ================= Backdrop ================= */
+const dev$ = document.getElementById('device');
+dev$.addEventListener('scroll', () => { if (dev$.scrollTop || dev$.scrollLeft) dev$.scrollTop = dev$.scrollLeft = 0; });   // the frame never scrolls; its screens do
+const cv = document.getElementById('sea'), cx = cv.getContext('2d');
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let sceneKey = 'A', sceneFrom = null, sceneT = 1, horizon = .56, horizonTarget = .56, intensity = 0, dust = 0, dustTarget = 0, orbA = 1, orbTarget = 1;
+const hex = h => [1,3,5].map(i => parseInt(h.slice(i, i+2), 16));
+const lerpHex = (a, b, t) => { const A = hex(a), B = hex(b); return '#' + A.map((v,i) => Math.round(v + (B[i]-v)*t).toString(16).padStart(2,'0')).join(''); };
+const hexA = (h, a) => { const [r,g,b] = hex(h); return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')'; };
+const ease = t => t * t * (3 - 2 * t);
+function setScene(k){
+  if (!palette(k) || k === sceneKey) return;
+  sceneFrom = sceneFrom && sceneT < .5 ? sceneFrom : sceneKey;   // an interrupted fade continues from whichever theme dominated
+  sceneDur = (k.endsWith('.d') !== sceneKey.endsWith('.d')) ? 2600 : 1600;   // changing modes fades slower
+  sceneKey = k; sceneT = 0;
+}
+let sceneDur = 1600, shiftTimer = 0;
+/* One call sets the whole backdrop for a screen: palette, blur, horizon, dust. */
+function setMood(mood, key){
+  const dark = !!DARK_MOODS[mood];
+  if (dev$.dataset.mode !== (dark ? 'dark' : 'light')) { dev$.classList.add('shifting'); clearTimeout(shiftTimer); shiftTimer = setTimeout(() => dev$.classList.remove('shifting'), 2900); }
+  dev$.dataset.mood = mood; dev$.dataset.mode = dark ? 'dark' : 'light';
+  const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.content = dark ? '#0c0b12' : '#f1ede6';
+  if (key) setScene(key + (dark ? '.d' : ''));
+  horizonTarget = MOOD_HORIZON[mood] ?? .56;
+  dustTarget = MOOD_DUST[mood] || 0;
+  orbTarget = mood === 'player' ? .28 : 1;   // the sphere steps back while you train
+  intensity = mood === 'player' ? 1 : mood === 'done' ? .5 : 0;
+}
+let sceneCache = new Map(), sceneGeo = null;
+function resize(){ const dpr = Math.min(1.5, devicePixelRatio || 1); cv.width = cv.clientWidth * dpr; cv.height = cv.clientHeight * dpr; cx.setTransform(dpr,0,0,dpr,0,0); sceneCache = new Map(); sceneGeo = null; }
+function fitFrame(){ const s = Math.min(1, (innerHeight - 56) / 852, (innerWidth - 32) / 393); document.documentElement.style.setProperty('--fit', s.toFixed(4)); }
+addEventListener('resize', () => { fitFrame(); resize(); }); fitFrame(); resize();
+
+/* ---- Geometry: shared by every theme, seeded so it never changes between renders ---- */
+function rng(seed){ return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function layer(W, H, dpr){ const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(W * dpr)); c.height = Math.max(1, Math.ceil(H * dpr)); const x = c.getContext('2d'); x.setTransform(dpr,0,0,dpr,0,0); return [c, x]; }
+function geometry(W, H){
+  if (sceneGeo && sceneGeo.W === W && sceneGeo.H === H) return sceneGeo;
+  const r = rng(11), WL0 = H * .66, dpr = cv.width / Math.max(1, W);
+  // long stratus bands of haze
+  const haze = Array.from({length: 7}, (_, i) => ({ w: W * (1.3 + r() * .9), h: H * (.012 + r() * .02), y: H * (.07 + i * .06 + r() * .02),
+    x0: r() * W * 2, v: 1.2 + r() * 2.6, a: .35 + r() * .35, par: .2 + i * .04 }));
+  const bell = (u, c, w) => Math.exp(-(((u - c) / w) ** 2));
+  const far = x => { const u = x / W; return WL0 - H * .016 - H * .05 * bell(u, .2, .34) - H * .022 * bell(u, .64, .24); };
+  const near = x => { const u = x / W, s = (1 + Math.cos(Math.PI * Math.min(1, u / .8))) / 2; return WL0 + 6 - H * .118 * s + H * .006 * Math.sin(u * 8.5); };
+  const R = Math.min(W * .21, H * .1);
+  const sphere = { x: W * .76, y: WL0 - H * .19, r: R };
+  const g = rng(5);
+  const glints = Array.from({length: 14}, () => ({ x: .62 + g() * .34, y: Math.pow(g(), 1.5), l: 10 + g() * 34, p: g() * 6.28 }));
+  // film grain tile and vignette, shared by all themes
+  const [grain, gx] = layer(160, 160, 1), id = gx.createImageData(160, 160);
+  for (let i = 0; i < id.data.length; i += 4) { const v = 128 + (g() - .5) * 255; id.data[i] = id.data[i+1] = id.data[i+2] = v; id.data[i+3] = 255; }
+  gx.putImageData(id, 0, 0);
+  const [vig, vx] = layer(W, H, dpr), vg = vx.createRadialGradient(W * .5, H * .45, Math.min(W, H) * .35, W * .5, H * .45, Math.max(W, H) * .8);
+  vg.addColorStop(0, 'rgba(8,6,14,0)'); vg.addColorStop(1, 'rgba(8,6,14,.42)'); vx.fillStyle = vg; vx.fillRect(0, 0, W, H);
+  const [vigL, vl] = layer(W, H, dpr), vgl = vl.createRadialGradient(W * .5, H * .45, Math.min(W, H) * .4, W * .5, H * .45, Math.max(W, H) * .8);
+  vgl.addColorStop(0, 'rgba(120,104,92,0)'); vgl.addColorStop(1, 'rgba(120,104,92,.14)'); vl.fillStyle = vgl; vl.fillRect(0, 0, W, H);
+  sceneGeo = { W, H, WL0, haze, far, near, sphere, glints, grain, grainPat: cx.createPattern(grain, 'repeat'), vig, vigL };
+  return sceneGeo;
+}
+
+/* ---- Per-theme layers, rendered once and reused every frame ---- */
+function themeLayers(k){
+  const W = cv.clientWidth, H = cv.clientHeight, dpr = cv.width / Math.max(1, W), id = k + '|' + W + '|' + H + '|' + dpr;
+  if (sceneCache.has(id)) return sceneCache.get(id);
+  const P = palette(k), G = geometry(W, H), { WL0 } = G, S = G.sphere;
+  // sky
+  const [back, b] = layer(W, H, dpr);
+  let gr = b.createLinearGradient(0, 0, 0, WL0);
+  gr.addColorStop(0, P.sky[0]); gr.addColorStop(.62, P.sky[1]); gr.addColorStop(1, P.sky[2]);
+  b.fillStyle = gr; b.fillRect(0, 0, W, H);
+  gr = b.createRadialGradient(S.x, WL0 - H * .05, 0, S.x, WL0 - H * .05, Math.max(W, H) * .5);
+  gr.addColorStop(0, hexA(P.sun, .42)); gr.addColorStop(.35, hexA(P.sun, .12)); gr.addColorStop(1, hexA(P.sun, 0));
+  b.fillStyle = gr; b.fillRect(0, 0, W, H);
+  gr = b.createLinearGradient(0, 0, W * .8, 0);
+  gr.addColorStop(0, hexA(P.shade || lerpHex(P.sky[0], P.water[1], .5), P.shadeA ?? .32)); gr.addColorStop(1, hexA(P.shade || P.sky[0], 0));
+  b.fillStyle = gr; b.fillRect(0, 0, W, WL0);
+  // haze bands
+  const haze = G.haze.map(hz => {
+    const [hc, x] = layer(hz.w, hz.h * 3, dpr * .5);
+    x.translate(hz.w / 2, hz.h * 1.5); x.scale(hz.w / (hz.h * 3), 1);
+    const q = x.createRadialGradient(0, 0, 0, 0, 0, hz.h * 1.5);
+    q.addColorStop(0, hexA(P.haze[0], .5)); q.addColorStop(.55, hexA(lerpHex(P.haze[0], P.haze[1], .5), .2)); q.addColorStop(1, hexA(P.haze[1], 0));
+    x.fillStyle = q; x.beginPath(); x.arc(0, 0, hz.h * 1.5, 0, Math.PI * 2); x.fill();
+    return hc;
+  });
+  // sand
+  const sand = (x, f, col, light) => {
+    let top = 1e9; x.beginPath(); x.moveTo(-10, H);
+    for (let px = -10; px <= W + 10; px += 5) { const y = Math.min(f(px), WL0 + 8); top = Math.min(top, y); x.lineTo(px, y); }
+    x.lineTo(W + 10, H); x.closePath();
+    const q = x.createLinearGradient(0, top, 0, WL0 + 8);
+    q.addColorStop(0, lerpHex(col, P.rim, light)); q.addColorStop(.4, col); q.addColorStop(1, lerpHex(col, P.water[1], .4));
+    x.fillStyle = q; x.fill();
+    const side = x.createLinearGradient(0, 0, W, 0);
+    side.addColorStop(0, hexA(P.water[1], .22)); side.addColorStop(.6, hexA(P.water[1], 0)); side.addColorStop(1, hexA(P.rim, .14));
+    x.fillStyle = side; x.fill();
+    x.save(); x.beginPath();
+    for (let px = -10; px <= W + 10; px += 5) { const y = f(px); if (y > WL0 + 2) break; px === -10 ? x.moveTo(px, y) : x.lineTo(px, y); }
+    x.strokeStyle = hexA(P.rim, .38); x.lineWidth = .8; x.shadowColor = P.rim; x.shadowBlur = 6; x.stroke(); x.restore();
+  };
+  const [landBack, lb] = layer(W, H, dpr), [landFront, lf] = layer(W, H, dpr), [orb, o] = layer(W, H, dpr);
+  sand(lb, G.far, P.dune[0], .3);
+  sand(lf, G.near, P.dune[1], .22);
+  // satin sphere: soft key light, horizon reflected in its lower half, a thin rim
+  gr = o.createRadialGradient(S.x - S.r * .38, S.y - S.r * .45, S.r * .05, S.x, S.y, S.r * 1.02);
+  gr.addColorStop(0, lerpHex(P.pearl[0], P.pearl[3], .6)); gr.addColorStop(.5, P.pearl[0]);
+  gr.addColorStop(.9, lerpHex(P.pearl[0], P.water[1], .45)); gr.addColorStop(1, lerpHex(P.pearl[0], P.water[1], .6));
+  o.fillStyle = gr; o.beginPath(); o.arc(S.x, S.y, S.r, 0, Math.PI * 2); o.fill();
+  o.save(); o.beginPath(); o.arc(S.x, S.y, S.r, 0, Math.PI * 2); o.clip();
+  gr = o.createLinearGradient(0, S.y - S.r * .1, 0, S.y + S.r);
+  gr.addColorStop(0, hexA(P.sky[2], 0)); gr.addColorStop(.22, hexA(P.sky[2], .2)); gr.addColorStop(.42, hexA(P.water[1], .16)); gr.addColorStop(1, hexA(P.water[1], .08));
+  o.fillStyle = gr; o.fillRect(S.x - S.r, S.y - S.r, S.r * 2, S.r * 2); o.restore();
+  o.strokeStyle = hexA(P.rim, .45); o.lineWidth = 1; o.beginPath(); o.arc(S.x, S.y, S.r - .5, -1.1, 1.3); o.stroke();
+  // reflection source: everything above the waterline, flipped (at half resolution)
+  const [mirror, mr] = layer(W, WL0, dpr * .5);
+  mr.setTransform(dpr * .5, 0, 0, -dpr * .5, 0, WL0 * dpr * .5);
+  [back, landBack, orb, landFront].forEach(c => mr.drawImage(c, 0, 0, W, H));
+  const [mote, m] = layer(12, 12, dpr);
+  gr = m.createRadialGradient(6, 6, 0, 6, 6, 6); gr.addColorStop(0, hexA(P.mote, 1)); gr.addColorStop(.35, hexA(P.mote, .5)); gr.addColorStop(1, hexA(P.mote, 0));
+  m.fillStyle = gr; m.fillRect(0, 0, 12, 12);
+  const L = { P, back, haze, landBack, landFront, orb, mirror, mote };
+  sceneCache.set(id, L);
+  if (sceneCache.size > 3) sceneCache.delete(sceneCache.keys().next().value);
+  return L;
+}
+
+/* ---- Frame: drifting haze, a slow sheen on the sphere, rippled reflections, grain ---- */
+const motes = Array.from({length: 18}, (_, i) => ({ x: (i * 0.618) % 1, y: (i * 0.377 + .1) % 1, r: .5 + (i % 4) * .28, s: .002 + (i % 5) * .0012, p: i * 1.3 }));
+let lastFrame = 0;
+function draw(now){
+  requestAnimationFrame(draw);
+  if (now - lastFrame < 33) return;
+  const dt = Math.min(100, now - lastFrame); lastFrame = now;
+  if (sceneT < 1) sceneT = Math.min(1, sceneT + dt / sceneDur);
+  horizon += (horizonTarget - horizon) * Math.min(1, dt / 1100);
+  dust += (dustTarget - dust) * Math.min(1, dt / 1200);
+  orbA += (orbTarget - orbA) * Math.min(1, dt / 1100);
+  const W = cv.clientWidth, H = cv.clientHeight; if (!W || !H) return;
+  const dpr = cv.width / W, t = reduceMotion ? 0 : now / 1000, G = geometry(W, H), dy = (horizon - .56) * H, wl = G.WL0 + dy, S = G.sphere;
+  const e = ease(sceneT), fading = sceneFrom && sceneT < 1;
+  const list = fading ? [[themeLayers(sceneFrom), 1, 1 - e], [themeLayers(sceneKey), e, e]] : [[themeLayers(sceneKey), 1, 1]];
+  const each = fn => list.forEach(([L, a, a2]) => { cx.globalAlpha = a; fn(L, a2); });
+  cx.globalAlpha = 1; cx.fillStyle = list[list.length - 1][0].P.sky[0]; cx.fillRect(0, 0, W, H);
+  each(L => cx.drawImage(L.back, 0, dy * .2, W, H));
+  G.haze.forEach((hz, i) => {
+    const span = W + hz.w, x = ((hz.x0 + t * hz.v) % span + span) % span - hz.w;
+    each(L => { cx.globalAlpha *= hz.a; cx.drawImage(L.haze[i], x, hz.y + dy * hz.par - hz.h, hz.w, hz.h * 3); });
+  });
+  each(L => cx.drawImage(L.landBack, 0, dy, W, H));
+  // the sphere floats with a slow breath
+  const bob = Math.sin(t * .35) * 3, sy = S.y + dy + bob;
+  each(L => { cx.globalAlpha *= orbA; cx.drawImage(L.orb, 0, dy + bob, W, H); });
+  each((L, a2) => {
+    cx.globalAlpha = a2 * orbA; cx.save(); cx.beginPath(); cx.arc(S.x, sy, S.r, 0, Math.PI * 2); cx.clip();
+    cx.globalCompositeOperation = 'screen';
+    const th = t * .08;
+    [[L.P.pearl[1], th], [L.P.pearl[2], th + 2.6]].forEach(([col, ang]) => {
+      const gx = S.x + Math.cos(ang) * S.r * .5, gy = sy + Math.sin(ang) * S.r * .5, q = cx.createRadialGradient(gx, gy, 0, gx, gy, S.r * .8);
+      q.addColorStop(0, hexA(col, .22)); q.addColorStop(1, hexA(col, 0)); cx.fillStyle = q; cx.fillRect(S.x - S.r, sy - S.r, S.r * 2, S.r * 2);
+    });
+    cx.globalCompositeOperation = 'source-over';
+    const hl = cx.createRadialGradient(S.x - S.r * .42, sy - S.r * .46, 0, S.x - S.r * .42, sy - S.r * .46, S.r * .26);
+    hl.addColorStop(0, hexA(L.P.pearl[3], .55)); hl.addColorStop(1, hexA(L.P.pearl[3], 0)); cx.fillStyle = hl; cx.fillRect(S.x - S.r, sy - S.r, S.r * 2, S.r * 2);
+    cx.restore();
+  });
+  each(L => cx.drawImage(L.landFront, 0, dy, W, H));
+  // still water: base, rippled mirror, depth, horizon mist, the sphere's shadow, glints
+  const depth = H - wl, md = dpr * .5;
+  each(L => { const q = cx.createLinearGradient(0, wl, 0, H); q.addColorStop(0, L.P.water[0]); q.addColorStop(1, L.P.water[1]); cx.fillStyle = q; cx.fillRect(0, wl, W, depth); });
+  each(L => {
+    const base = cx.globalAlpha, M = L.mirror;
+    for (let y = 0; y < depth && y < G.WL0; y += 4) {
+      const k = y / depth, off = Math.sin(y * .09 + t * .9) * (.4 + y * .025);
+      cx.globalAlpha = base * (.62 - .42 * k);
+      cx.drawImage(M, 0, y * md, M.width, 4 * md, off, wl + y, W, 4.4);
+    }
+  });
+  each(L => {
+    const base = cx.globalAlpha;
+    let q = cx.createLinearGradient(0, wl, 0, H); q.addColorStop(0, hexA(L.P.water[1], 0)); q.addColorStop(1, hexA(L.P.water[1], .6));
+    cx.fillStyle = q; cx.fillRect(0, wl, W, depth);
+    q = cx.createLinearGradient(0, wl - 5, 0, wl + 5); q.addColorStop(0, hexA(L.P.sun, 0)); q.addColorStop(.5, hexA(L.P.sun, .4)); q.addColorStop(1, hexA(L.P.sun, 0));
+    cx.fillStyle = q; cx.fillRect(0, wl - 5, W, 10);
+    cx.save(); cx.translate(S.x, wl + H * .014); cx.scale(1, .12);
+    q = cx.createRadialGradient(0, 0, 0, 0, 0, S.r * 1.2); q.addColorStop(0, hexA(L.P.water[1], .4)); q.addColorStop(1, hexA(L.P.water[1], 0));
+    cx.fillStyle = q; cx.beginPath(); cx.arc(0, 0, S.r * 1.2, 0, Math.PI * 2); cx.fill(); cx.restore();
+    cx.fillStyle = L.P.sun;
+    G.glints.forEach(g => { cx.globalAlpha = base * (.08 + .12 * (Math.sin(t * .7 + g.p) * .5 + .5)); cx.fillRect(g.x * W - g.l / 2, wl + 6 + g.y * depth * .5, g.l * (1 - g.y * .5), 1); });
+  });
+  // drifting motes
+  if (dust > .02) {
+    const sprite = list[list.length - 1][0].mote;
+    motes.forEach(m => {
+      const y = ((m.y - t * m.s) % 1 + 1) % 1, x = m.x + Math.sin(t * .25 + m.p) * .012, s = m.r * 5;
+      cx.globalAlpha = dust * (.25 + .45 * (Math.sin(t * .7 + m.p) * .5 + .5));
+      cx.drawImage(sprite, x * W - s / 2, y * H - s / 2, s, s);
+    });
+  }
+  // finish: vignette and fine film grain
+  each(L => cx.drawImage(L.P.light ? G.vigL : G.vig, 0, 0, W, H));
+  const lightNow = list[list.length - 1][0].P.light;
+  cx.globalAlpha = lightNow ? .05 : .06; cx.globalCompositeOperation = lightNow ? 'multiply' : 'overlay'; cx.fillStyle = G.grainPat;
+  cx.save(); cx.setTransform(1, 0, 0, 1, 0, 0); cx.fillRect(0, 0, cv.width, cv.height); cx.restore();
+  cx.globalCompositeOperation = 'source-over'; cx.globalAlpha = 1;
+}
+requestAnimationFrame(draw);
+
+/* Screen changes crossfade (and blur) through the View Transitions API where available. */
+function swap(fn, type){
+  if (!document.startViewTransition || reduceMotion) { fn(); return; }
+  const root = document.documentElement;
+  if (type) root.dataset.vt = type;
+  try { document.startViewTransition(fn).finished.finally(() => { if (root.dataset.vt === type) delete root.dataset.vt; }); }
+  catch (e) { delete root.dataset.vt; fn(); }
+}
+
+/* ================= Icons ================= */
+const I = {
+  gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>',
+  close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>',
+  next:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l7 6-7 6M17 6v12"/></svg>',
+  prev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-7 6 7 6M7 6v12"/></svg>',
+  chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>',
+  chevL:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>',
+  chevD:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  ring:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="21"/><path d="M15 24.5l6 6L33 18"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  sound:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+  mute:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z"/><path d="M16 10l4 4M20 10l-4 4"/></svg>',
+  share:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></svg>',
+  wa:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z"/></svg>',
+  msg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4z"/></svg>',
+  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>',
+};
+
+/* ================= Home ================= */
+let ui = { tab:'home', len:null, key:null, libTab:'overview', calMonth:null };
+function greeting(){ const h = new Date().getHours(); return h < 5 ? 'Late night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
+const DAYNAME = {Mon:'Monday', Tue:'Tuesday', Thu:'Thursday', Sat:'Saturday'};
+const LETTERS = ['M','T','W','T','F','S','S'];
+function weekDots(withKeys){
+  const ws = weekStart(new Date()), byDay = {};
+  S.sessions.forEach(s => { if (s.date >= ws) byDay[s.date] = s.key; });
+  return LETTERS.map((l, i) => { const d = parseISO(ws); d.setDate(d.getDate() + i); const iso = isoDate(d);
+    return `<div class="wd${byDay[iso] ? ' done' : ''}${iso === todayISO() ? ' today' : ''}"><span>${l}</span><i></i></div>`; }).join('');
+}
+function pressDrills(key, phase){ return PHASES[phase][key === 'A' || key === 'C' ? key : 'BD']; }
+
+function renderHome(){
+  const sug = suggestNext(), phase = currentPhase(), ph = PHASES[phase], week = programWeek();
+  const todays = S.sessions.filter(s => s.date === todayISO()), doneToday = todays[todays.length - 1];
+  if (ui.tab === 'home' && $('#overlay').hidden) setMood('home', doneToday ? doneToday.key : sug);
+  let body;
+  if (doneToday) {
+    const st = streakInfo(), wk = thisWeek().length;
+    body = `
+      <div class="grow"></div>
+      <div class="hero celebrate">
+        <div class="mark rise">${I.ring}</div>
+        <h2 class="rise" style="--d:1">Well done.<br>Session ${doneToday.key} is complete today.</h2>
+        <div class="week rise" style="--d:2" aria-label="This week">${weekDots()}</div>
+        <p class="small rise" style="--d:3">${st.cur > 1 ? st.cur + '-session streak · ' : ''}${wk} of ${weeklyGoal()} this week · next up, Session ${sug} ${META[sug].dow === new Date().getDay() ? 'next time' : 'on ' + DAYNAME[META[sug].day]}</p>
+        <button class="pill glass small rise" style="--d:4" id="b-practice">Start another workout</button>
+      </div>
+      <div class="grow" style="flex:.6"></div>`;
+  } else {
+    const drills = pressDrills(sug, phase);
+    body = `
+      <div class="grow"></div>
+      <div class="hero">
+        <span class="numeral rise">${sug}</span>
+        <span class="label rise" style="--d:1">Suggested session · ${META[sug].len} min</span>
+        <p class="lede rise" style="--d:2">${META[sug].n.replace(' + ', ' and ')}</p>
+        <p class="voice rise" style="--d:3">Press drill, ${drills.map(d => EX[d[0]].n.toLowerCase()).join(' and ')}</p>
+      </div>
+      <div class="bottom-bar rise" style="--d:5"><button class="pill primary" id="b-practice">Start practice</button></div>`;
+  }
+  $('#v-home').innerHTML = `
+    <div class="row between">
+      <h1 class="greet">${greeting()}</h1>
+      <div class="ctrlpill glass"><button class="icon" id="b-settings" aria-label="Preferences">${I.gear}</button></div>
+    </div>
+    ${doneToday ? '' : `<div class="week" aria-label="This week">${weekDots()}</div>`}
+    <div class="metas">
+      <button class="metabtn" id="b-phase" aria-haspopup="dialog">Phase ${phase} · ${ph.n}${I.chevD}</button>
+      <button class="metabtn" id="b-week" aria-haspopup="dialog">Week ${Math.min(week, 99)} / 16${I.chevD}</button>
+      ${isDeload() ? '<span class="metabtn warm">Deload week</span>' : ''}
+    </div>
+    ${body}`;
+  $('#b-practice').onclick = openPractice;
+  $('#b-settings').onclick = openSettings;
+  $('#b-phase').onclick = openPhaseSheet;
+  $('#b-week').onclick = openWeekSheet;
+}
+
+/* ================= Practice ================= */
+function openPractice(){ ui.len = null; ui.key = null; ui.ind = null; swap(() => renderPractice(true)); }
+function renderPractice(first){
+  const nextKey = suggestNext();
+  if (!ui.len) ui.len = META[nextKey].len;
+  const sug = suggestFor(ui.len);
+  if (!ui.key || META[ui.key].len !== ui.len) ui.key = sug;
+  const phase = currentPhase(), steps = buildSteps(ui.key, phase), blocks = blocksOf(steps);
+  const pair = ui.len === 15 ? ['A','C'] : ['B','D'], last = S.sessions[S.sessions.length - 1];
+  let hint = '';
+  if (!last && ui.key !== 'A') hint = 'The plan opens with <b>Session A</b>, but Session ' + ui.key + ' works too' + (META[ui.key].len === 45 ? ' if you want the longer session today.' : '.');
+  else if (last && last.date === todayISO()) hint = 'You already trained today. The plan calls for rest or 10 minutes of easy mobility.';
+  else if (last && META[ui.key].len === 45 && META[last.key].len === 45 && dayDiff(last.date, todayISO()) <= 1) hint = 'Keep a rest day between the two strength days.';
+  setMood('practice', ui.key);
+  const r = first ? 'rise' : '';
+  const o = $('#overlay');
+  o.innerHTML = `<div class="inner">
+    <div class="topbar"><button class="icon" id="pr-close" aria-label="Close">${I.close}</button>
+      <div class="mid">Today’s practice<small>Phase ${phase} · ${PHASES[phase].n}${isDeload() ? ' · deload' : ''}</small></div><span class="icon"></span></div>
+    <div class="sect ${r}" style="--d:1"><span class="label">Select length</span>
+      <div class="pick" data-g="len" role="radiogroup" aria-label="Select length"><i class="ind" aria-hidden="true"></i>
+        ${[15,45].map(l => `<button role="radio" data-len="${l}" aria-pressed="${ui.len === l}" aria-checked="${ui.len === l}"><span class="foot">${l === META[nextKey].len ? '<span class="sugpill">Suggested</span>' : ''}</span><span class="numeral">${l}<small>min</small></span></button>`).join('')}
+      </div></div>
+    <div class="sect ${r}" style="--d:2"><span class="label">Select session</span>
+      <div class="pick" data-g="key" role="radiogroup" aria-label="Select session"><i class="ind" aria-hidden="true"></i>
+        ${pair.map(k => `<button role="radio" data-key="${k}" aria-pressed="${ui.key === k}" aria-checked="${ui.key === k}"><span class="foot">${k === sug ? '<span class="sugpill">Suggested</span>' : ''}</span><span class="numeral">${k}</span><span class="cap">${META[k].n}</span></button>`).join('')}
+      </div></div>
+    <div class="sect ${r}" style="--d:3"><span class="label dim">The plan</span>
+      <div class="plan">${blocks.map(b => `<div><span>${esc(b.name)}</span><span>${Math.round(b.dur/60)} min</span></div>`).join('')}</div>
+      ${hint ? `<p class="note">${hint}</p>` : ''}</div>
+    <div class="grow"></div>
+    <div class="bottom-bar dock ${r}" style="--d:4"><button class="pill primary" id="b-start">Begin Session ${ui.key}</button></div>
+  </div>`;
+  o.hidden = false;
+  // slide each group's underline from where it was to the new choice
+  o.querySelectorAll('.pick').forEach(pk => {
+    const sel = pk.querySelector('[aria-pressed="true"]'), ind = pk.querySelector('.ind'), g = pk.dataset.g;
+    const to = { l: sel.offsetLeft, w: sel.offsetWidth }, from = ui.ind && ui.ind[g];
+    if (from && !first) { ind.style.transition = 'none'; ind.style.transform = `translateX(${from.l}px)`; ind.style.width = from.w + 'px'; void ind.offsetWidth; ind.style.transition = ''; }
+    ind.style.transform = `translateX(${to.l}px)`; ind.style.width = to.w + 'px';
+    (ui.ind = ui.ind || {})[g] = to;
+  });
+  $('#b-start').onclick = () => { buzz([10, 50, 14]); swap(() => startPlayer(ui.key), 'enter'); };
+  $('#pr-close').onclick = closePractice;
+  o.querySelectorAll('[data-len]').forEach(b => b.onclick = () => { if (ui.len === +b.dataset.len) return; ui.len = +b.dataset.len; ui.key = suggestFor(ui.len); renderPractice(); });
+  o.querySelectorAll('[data-key]').forEach(b => b.onclick = () => { ui.key = b.dataset.key; renderPractice(); });
+}
+function closeOverlay(){ const o = $('#overlay'); o.hidden = true; o.innerHTML = ''; }
+function closePractice(){ swap(() => { closeOverlay(); renderAll(); }); }
+
+/* ================= Journal ================= */
+function earnedMilestones(){ const m = new Map(); S.sessions.forEach(s => (s.milestones || []).forEach(x => { if (!m.has(x)) m.set(x, s.date); })); return m; }
+function bestOf(field){ let best = null; S.sessions.forEach(s => { const v = s.bench && s.bench[field]; if (v && (!best || v > best.v)) best = {v, date:s.date}; }); return best; }
+function renderJournal(){
+  if ($('#overlay').hidden) setMood('journal', 'N');
+  const st = streakInfo(), wk = thisWeek(), total = S.sessions.reduce((a, s) => a + (s.secs || 0), 0), ms = earnedMilestones();
+  const now = new Date();
+  if (!ui.calMonth) ui.calMonth = [now.getFullYear(), now.getMonth()];
+  const [cy, cm] = ui.calMonth, first = new Date(cy, cm, 1), daysIn = new Date(cy, cm + 1, 0).getDate(), lead = (first.getDay() + 6) % 7;
+  const byDate = {}; S.sessions.forEach(s => (byDate[s.date] = byDate[s.date] || []).push(s.key));
+  let cal = LETTERS.map(d => `<div class="dow">${d}</div>`).join('') + '<div></div>'.repeat(lead);
+  for (let d = 1; d <= daysIn; d++) {
+    const iso = isoDate(new Date(cy, cm, d)), ks = byDate[iso];
+    cal += `<div class="day${ks ? ' has' : ''}${iso === todayISO() ? ' today' : ''}" title="${ks ? 'Session ' + ks.join(', ') + ', ' : ''}${niceDate(iso)}">${ks ? ks[ks.length - 1] : d}</div>`;
+  }
+  const fs = bestOf('fs'), ctw = bestOf('ctw');
+  const bench = (label, best, target) => {
+    const v = best ? best.v : 0, max = target * 1.15;
+    return `<div class="bench"><div class="row between"><span>${label}</span><span><span class="numeral">${best ? v : '—'}</span>${best ? '<span class="small"> s</span>' : ''}</span></div>
+      <div class="track" role="img" aria-label="${label}: best ${v} seconds, press-ready target ${target} seconds"><i style="width:${Math.min(100, v / max * 100)}%"></i><em style="left:${target / max * 100}%"></em></div>
+      <span class="small">Press-ready at ${target} s${best ? ' · best on ' + niceDate(best.date) : ''}</span></div>`;
+  };
+  const list = S.sessions.slice().reverse();
+  $('#v-journal').innerHTML = `
+    <h1 class="page-title">Progress</h1>
+    ${S.sessions.length ? `
+    <div class="j-hero">
+      <span class="numeral rise">${st.cur}</span>
+      <span class="label rise" style="--d:1">Session streak</span>
+      <p class="voice rise" style="--d:2">${st.best > st.cur ? 'Best run, ' + st.best + ' sessions' : 'Your longest run yet'}</p>
+      <div class="stats rise" style="--d:3">
+        <div><b>${wk.length}/${weeklyGoal()}</b><span>This week</span></div>
+        <div><b>${S.sessions.length}</b><span>Sessions</span></div>
+        <div><b>${fmtMins(total)}</b><span>On the mat</span></div>
+      </div>
+    </div>` : `
+    <div class="empty j-hero"><p class="voice rise">The first session is the hardest one to start.</p><p class="small rise" style="--d:1">Finish a session and it lands here, with how it felt. Your streak holds while no more than two rest days fall between sessions.</p></div>`}
+    <div class="block rise" style="--d:4">
+      <div class="row between"><span class="label">${first.toLocaleDateString(undefined, {month:'long', year:'numeric'})}</span>
+        <div class="row" style="gap:0;margin-right:-10px"><button class="icon" id="cal-prev" aria-label="Previous month">${I.chevL}</button><button class="icon" id="cal-next" aria-label="Next month">${I.chev}</button></div></div>
+      <div class="cal">${cal}</div>
+    </div>
+    ${fs || ctw ? `<div class="block"><span class="label">Benchmarks</span>${bench('Freestanding hold', fs, 20)}${bench('Chest-to-wall hold', ctw, 90)}</div>` : ''}
+    ${ms.size ? `<div class="block"><span class="label">Milestones · ${ms.size} of ${MILESTONES.length}</span><div class="list">${[...ms].map(([n, d]) => `<div class="ms"><span>${esc(n)}</span><span>${niceDate(d)}</span></div>`).join('')}</div></div>` : ''}
+    ${list.length ? `<div class="block"><span class="label">Sessions</span><div class="list">${list.map(s => `<button class="logrow" data-sid="${s.id}">
+        <span class="numeral">${s.key}</span>
+        <span class="mid"><span class="t">${META[s.key].n}</span><span class="s">${[s.feel, s.notes].filter(Boolean).map(esc).join(' · ') || 'Energy ' + (s.energy || '–') + '/10'}</span></span>
+        <span class="d">${niceDate(s.date)}<br>${fmtMins(s.secs || 0)}</span></button>`).join('')}</div></div>` : ''}
+    <p class="small" style="margin-top:40px;text-align:center">${synced ? 'Saved to your account' : 'Saved on this device'}</p>`;
+  $('#cal-prev').onclick = () => { let [y,m] = ui.calMonth; m--; if (m < 0) { m = 11; y--; } ui.calMonth = [y,m]; renderJournal(); };
+  $('#cal-next').onclick = () => { let [y,m] = ui.calMonth; m++; if (m > 11) { m = 0; y++; } ui.calMonth = [y,m]; renderJournal(); };
+  document.querySelectorAll('[data-sid]').forEach(b => b.onclick = () => openSessionDetail(b.dataset.sid));
+}
+
+/* ================= Library ================= */
+const LIBTABS = [['overview','Overview'],['sessions','Sessions'],['exercises','Exercises'],['phases','Phases'],['benchmarks','Benchmarks'],['rules','Rules']];
+function renderLibrary(){
+  if ($('#overlay').hidden) setMood('library', 'M');
+  const t = ui.libTab, phase = currentPhase();
+  let body = '';
+  if (t === 'overview') {
+    body = `<section><h2>The press plan</h2>
+      <p>A <b>16-week plan, four days a week</b>, aimed at a first straight-arm straddle press from standing, with the pike press as a later goal.</p>
+      <p>Two days are <b>15-minute press sessions</b>, drills plus compression. Two are <b>45–60 minute strength and skill sessions</b>, paced here to 45 minutes. Add time in the player whenever you want the full hour.</p>
+      <p>The core method is <b>negatives</b>: lowering from handstand as slowly as possible teaches the press fastest. Wall and elevated variations take balance out of the picture so you can build volume.</p></section>
+      <section><h2>Three qualities</h2><div class="list">${CATS.map(c => `<div class="irow" style="grid-template-columns:44px 1fr"><span class="label">${c.k}</span><span><span class="nm">${c.n}</span><span class="ds">${c.p}</span></span></div>`).join('')}</div></section>
+      <section><h2>The week</h2><div class="list">
+        ${[['Mon','A · Press drills + compression','15 min'],['Tue','B · Strength + drills','45–60'],['Wed','Rest or easy mobility','10 opt.'],['Thu','C · Press drills + compression','15 min'],['Fri','Rest','—'],['Sat','D · Strength + drills','45–60'],['Sun','Rest or easy mobility','10 opt.']]
+          .map(r => `<div class="irow"><span class="label">${r[0]}</span><span class="nm">${r[1]}</span><span class="r">${r[2]}</span></div>`).join('')}</div>
+        <p class="small">Train the short press sessions after a rest day so the skill work is fresh. Never put the two strength days back to back.</p></section>`;
+  } else if (t === 'sessions') {
+    body = ['A','B','C','D'].map(k => { const steps = buildSteps(k, phase);
+      return `<section><div class="phase-row" style="padding:0"><div class="head"><span class="numeral">${k}</span><span class="nm">${META[k].n}</span><span class="label dim">${META[k].day} · ${META[k].len} min</span></div></div>
+        <div class="list">${blocksOf(steps).map(b => `<div class="irow" style="grid-template-columns:1fr auto"><span><span class="nm">${esc(b.name)}</span><span class="ds">${[...new Set(steps.filter(s => s.block === b.name).map(s => (s.code ? s.code + ' ' : '') + s.name))].map(esc).join(' · ')}</span></span><span class="r">${Math.round(b.dur/60)} min</span></div>`).join('')}</div>
+        <button class="pill glass small" data-go="${k}" style="align-self:flex-start">Begin Session ${k}</button></section>`; }).join('') + `<p class="small">Drills shown for Phase ${phase}.</p>`;
+  } else if (t === 'exercises') {
+    body = CATS.map(c => `<section><h2>${c.n}</h2><div class="list">${Object.keys(EX).filter(k => k[0] === c.k).map(k => `
+      <button class="irow" data-ex="${k}"><span class="label">${k}</span><span><span class="nm">${EX[k].n}</span><span class="ds">${EX[k].d}</span></span>${I.chev}</button>`).join('')}</div>
+      ${c.k === 'P' ? '<p class="small">Do every P drill with locked elbows. A bent-arm press uses different muscles, and the habit is hard to unlearn.</p>' : ''}</section>`).join('');
+  } else if (t === 'phases') {
+    body = `<section><div class="list">${[1,2,3,4].map(n => { const p = PHASES[n];
+      const dr = a => a.map(([c,d]) => `${c} ${EX[c].n.toLowerCase()}, ${d}`).join('; ');
+      return `<div class="phase-row"><div class="head"><span class="numeral">${n}</span><span class="nm">${p.n}</span><span class="label ${n === phase ? '' : 'dim'}">${n === phase ? 'You are here' : 'Weeks ' + p.w}</span></div>
+        <dl class="kv"><dt>Session A</dt><dd>${dr(p.A)}</dd><dt>Session C</dt><dd>${dr(p.C)}</dd><dt>B and D</dt><dd>${dr(p.BD)}</dd><dt>Strength</dt><dd>${p.str}</dd></dl>
+        <p class="gate">${p.gate}</p></div>`; }).join('')}</div>
+      <p class="small">Move on when you pass the gate, not when the calendar says so. Week 4 of every phase is a deload: same exercises, half the sets, then retest. Most people need 4–12 months for a first press.</p>
+      <button class="pill glass small" id="lib-phase" style="align-self:flex-start">Change my phase</button></section>`;
+  } else if (t === 'benchmarks') {
+    body = `<section><h2>Test in week 1, retest every 4 weeks</h2><p>They show which quality is holding you back, and they are the targets that unlock each phase.</p>
+      <div class="list">${BENCH.map(b => `<div class="phase-row" style="gap:6px"><span class="nm" style="font-size:15.5px;font-weight:500">${b.n}</span><span class="small">${b.how}</span>
+        <div class="stats" style="margin-top:8px"><div><b style="font-size:15px;white-space:normal">${b.s}</b><span>Start</span></div><div><b style="font-size:15px;white-space:normal">${b.t}</b><span>Press-ready</span></div></div></div>`).join('')}</div>
+      <p class="small">Under 45 s chest-to-wall or 5 s freestanding? Lean harder on handstand volume for the first 4 weeks. The press drills still go in, at the easiest level.</p></section>`;
+  } else {
+    body = `<section><h2>Progression</h2><div class="list">
+        ${['<b>Strength:</b> when you hit the top of the rep range on every set for two sessions, make it harder: higher box, longer hold, slower lowering.','<b>Press drills:</b> progress by control, not reps. A negative counts only if your elbows stay locked and your feet land softly.','Stop a set when two reps in a row look worse than the first.','Film one set a week from the side. Check that the shoulders lean past the hands as the hips rise.'].map(x => `<p style="padding:12px 0">${x}</p>`).join('')}</div></section>
+      <section><h2>Recovery</h2><div class="list">
+        ${['Keep at least one rest day between the two strength days.','Wrists take the most load. Always warm them up, and back off if pain lasts past the session.','If shoulders or elbows ache two sessions running, swap the press block for compression and flexibility for a week.'].map(x => `<p style="padding:12px 0">${x}</p>`).join('')}</div></section>
+      <section><h2>Common mistakes</h2><div class="list">${MISTAKES.map(m => `<div style="padding:12px 0;display:flex;flex-direction:column;gap:3px"><span style="font-weight:500">${m[0]}</span><span class="small" style="color:var(--ink-2)">${m[1]}</span></div>`).join('')}</div></section>
+      <p class="small">Sources in the plan: CrossFit, Presses to Handstand · StrongFirst forum · Awesome Ninja Fitness, Handstand Press Breakdown and Full Press to Handstand Breakdown · Legendary Strength, Press Handstand Training.</p>`;
+  }
+  $('#v-library').innerHTML = `
+    <h1 class="page-title">Library</h1>
+    <div class="ltabs" role="group" aria-label="Library sections">${LIBTABS.map(([k,n]) => `<button data-lib="${k}" aria-pressed="${t === k}">${n}</button>`).join('')}</div>
+    <div class="lib rise">${body}</div>`;
+  document.querySelectorAll('[data-lib]').forEach(b => b.onclick = () => { if (ui.libTab === b.dataset.lib) return; ui.libTab = b.dataset.lib; renderLibrary(); $('#scroll').scrollTop = 0; });
+  document.querySelectorAll('[data-ex]').forEach(b => b.onclick = () => openExercise(b.dataset.ex));
+  document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => swap(() => startPlayer(b.dataset.go), 'enter'));
+  const lp = $('#lib-phase'); if (lp) lp.onclick = openPhaseSheet;
+}
+
+/* ================= Sheets: full-screen frosted panels ================= */
+let sheetTimer = null;
+function openSheet(html, onMount){
+  const w = $('#sheetwrap');
+  clearTimeout(sheetTimer); w.style.opacity = ''; w.style.transition = '';
+  w.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="sheet-head"><button class="circle sm" data-close aria-label="Close">${I.close}</button></div>${html}</div>`;
+  w.hidden = false;
+  w.querySelector('[data-close]').onclick = closeSheet;
+  dragToDismiss(w.querySelector('.sheet'));
+  onMount && onMount(w);
+}
+function closeSheet(){
+  const w = $('#sheetwrap'); if (w.hidden) return;
+  const sh = w.querySelector('.sheet');
+  if (!sh || reduceMotion) { w.hidden = true; w.innerHTML = ''; return; }
+  sh.classList.add('closing'); w.style.transition = 'opacity .3s'; w.style.opacity = '0';
+  sheetTimer = setTimeout(() => { w.hidden = true; w.innerHTML = ''; w.style.opacity = ''; w.style.transition = ''; }, 280);
+}
+addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#sheetwrap').hidden) closeSheet(); });
+function dragToDismiss(sh){
+  let y0 = null, dy = 0;
+  sh.addEventListener('touchstart', e => { if (sh.scrollTop > 0 || e.target.closest('input, textarea, select, .wheel')) return; y0 = e.touches[0].clientY; dy = 0; }, {passive:true});
+  sh.addEventListener('touchmove', e => { if (y0 === null) return; dy = Math.max(0, e.touches[0].clientY - y0); if (dy > 4) { sh.style.transition = 'none'; sh.style.transform = 'translateY(' + dy * .6 + 'px)'; sh.style.opacity = String(1 - dy / 500); } }, {passive:true});
+  sh.addEventListener('touchend', () => { if (y0 === null) return; y0 = null; if (dy > 120) { closeSheet(); return; } sh.style.transition = 'transform .3s, opacity .3s'; sh.style.transform = ''; sh.style.opacity = ''; });
+}
+function buzz(ms){ try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} }
+
+function openExercise(code){
+  const e = EX[code], uses = ['A','B','C','D'].filter(k => buildSteps(k, currentPhase()).some(s => s.code === code));
+  openSheet(`<div class="ex-sheet"><span class="numeral" style="font-size:72px">${code}</span><span class="label" style="display:block">${uses.length ? 'In session ' + uses.join(', ') : 'Exercise library'}</span>
+    <h2 class="title" style="margin-top:22px">${e.n}</h2>
+    <p class="lede" style="font-size:19px;margin-top:10px;color:var(--ink-2)">${e.d}</p>
+    <hr class="rule" style="margin-top:24px">
+    <p class="voice">${e.c}${code[0] === 'P' ? ' Locked elbows on every rep.' : ''}</p></div>`);
+}
+
+function autoPhase(){ return Math.min(4, Math.ceil(programWeek() / 4)); }
+/* Phase picker: a swipeable wheel of phase numerals. The centred one is in focus; its details follow below. */
+function openPhaseSheet(){
+  const cur = currentPhase(), auto = autoPhase(), week = programWeek(), fs = bestOf('fs'), ctw = bestOf('ctw');
+  openSheet(`<h2 class="title">Your phase</h2>
+    <p class="sub">Scroll to explore. Move on when you pass the gate, not when the calendar says so.</p>
+    <div class="prail2" id="ph-line" aria-hidden="true">${[1,2,3,4].map(n => `<div class="pseg">${[1,2,3,4].map(i => `<i class="${(n - 1) * 4 + i === week ? 'now' : ''}"></i>`).join('')}</div>`).join('')}</div>
+      <div class="wheel" id="ph-wheel" role="listbox" aria-label="Phases" tabindex="0">
+        ${[1,2,3,4].map(n => `<button class="wi${n === cur ? ' cur' : ''}" role="option" data-n="${n}" aria-selected="${n === cur}" aria-label="Phase ${n}, ${PHASES[n].n}${n === cur ? ', current' : ''}" tabindex="-1"><span class="numeral">${n}</span></button>`).join('')}
+      </div>
+      <div class="pdetail" id="ph-detail" aria-live="polite"></div>
+    <div class="pact"><button class="pill primary wide" id="ph-go"></button></div>`,
+  w => {
+    const sheet = w.querySelector('.sheet'); sheet.classList.add('phase-sheet');
+    const wheel = $('#ph-wheel'), items = [...wheel.querySelectorAll('.wi')];
+    let focus = 0, raf = 0, detailTimer = 0;
+    // the rail spans exactly the space between the subtitle and the button
+    const fitRail = () => { const sub = sheet.querySelector('.sub'), pact = sheet.querySelector('.pact'), rail = $('#ph-line');
+      rail.style.top = (sub.offsetTop + sub.offsetHeight + 24) + 'px';
+      rail.style.bottom = (sheet.clientHeight - (pact.offsetTop + 40) + 20) + 'px'; };
+    fitRail();
+    const rail = $('#ph-line'), segs = [...rail.querySelectorAll('.pseg')];
+    const detail = n => { const p = PHASES[n];
+      return `<div class="row" style="gap:10px;align-items:baseline;flex-wrap:wrap"><span class="label">Weeks ${p.w}</span>${n === cur ? '<span class="sugpill">Current</span>' : n === auto ? '<span class="label dim">Calendar</span>' : ''}</div>
+        <h3 class="pname">${p.n}</h3>
+        <p class="gate">${p.gate}</p>
+        <p class="small">A ${p.A.map(d => d[0]).join('+')} · C ${p.C.map(d => d[0]).join('+')} · B/D ${p.BD.map(d => d[0]).join('+')}</p>`; };
+    const paint = () => {
+      raf = 0;
+      const ITEM = items[0].offsetHeight, mid = wheel.scrollTop + wheel.clientHeight / 2;
+      let best = 0, bestD = 1e9;
+      items.forEach((it, i) => {
+        const c = it.offsetTop + it.offsetHeight / 2, d = Math.abs(c - mid) / ITEM;
+        const k = Math.min(1, d);
+        it.style.transform = `scale(${(1 - k * .46).toFixed(3)}) translateX(${(-k * 14).toFixed(1)}px)`;
+        it.style.opacity = (1 - Math.min(1, d) * .72).toFixed(3);
+        it.style.filter = k > .02 ? `blur(${(k * 1.6).toFixed(2)}px)` : 'none';
+        // this phase's rail segment rides alongside its number, growing and inking as it nears the centre
+        const kk = Math.min(1.6, d), sh = ITEM * (.8 - .5 * Math.min(1, kk)), cy = c - wheel.scrollTop - rail.offsetTop;
+        segs[i].style.height = sh.toFixed(1) + 'px';
+        segs[i].style.transform = `translateY(${(cy - sh / 2).toFixed(1)}px) scaleX(${(1 + .8 * (1 - k)).toFixed(2)})`;
+        segs[i].style.opacity = (1 - .78 * k).toFixed(3);
+        if (d < bestD) { bestD = d; best = i; }
+      });
+      const n = best + 1;
+      if (n !== focus) {
+        const first = !focus; focus = n; if (!first) buzz(6);
+        // details settle in once the wheel lingers, so fast scrolls don't flicker through every phase
+        const det = $('#ph-detail'), show = () => { det.innerHTML = detail(n); det.classList.remove('swapin'); void det.offsetWidth; det.classList.add('swapin'); };
+        clearTimeout(detailTimer);
+        if (first) det.innerHTML = detail(n); else { det.classList.add('leaving'); detailTimer = setTimeout(() => { det.classList.remove('leaving'); show(); }, 110); }
+        const go = $('#ph-go'), isCur = S.profile.phase === n;
+        go.textContent = isCur ? 'Training in Phase ' + n : 'Train in Phase ' + n;
+        go.disabled = isCur; go.classList.toggle('is-current', isCur);
+        items.forEach((it, i) => it.setAttribute('aria-current', i + 1 === n ? 'true' : 'false'));
+      }
+    };
+    wheel.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(paint); }, {passive:true});
+    const to = (i, smooth) => wheel.scrollTo({ top: i * items[0].offsetHeight, behavior: smooth && !reduceMotion ? 'smooth' : 'instant' });
+    items.forEach((it, i) => it.onclick = () => to(i, true));
+    wheel.addEventListener('keydown', e => { if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); to(Math.max(0, Math.min(3, focus - 1 + (e.key === 'ArrowDown' ? 1 : -1))), true); } });
+    to(cur - 1); paint();
+    requestAnimationFrame(() => { to(cur - 1); paint(); });
+    const pick = n => { S.profile.phase = n; saveProfile(); buzz(12); closeSheet(); renderAll(); toast(n ? 'Training in Phase ' + n : 'Following the calendar'); };
+    $('#ph-go').onclick = () => pick(focus);
+  });
+}
+function openWeekSheet(){
+  const week = programWeek();
+  const rows = [1,2,3,4].map(n => `<div class="wrow"><span>${PHASES[n].n}</span>${[1,2,3,4].map(i => { const w = (n-1)*4 + i;
+    return `<div class="wcell${w < week ? ' past' : ''}${w === week ? ' now' : ''}${i === 4 ? ' dl' : ''}" aria-label="Week ${w}${i === 4 ? ', deload' : ''}${w === week ? ', this week' : ''}">${w}</div>`; }).join('')}</div>`).join('');
+  openSheet(`<span class="numeral" style="font-size:96px;margin-left:-5px">${Math.min(week, 99)}</span><span class="label" style="margin-top:10px">Week of 16</span>
+    <p class="sub">${week > 16 ? 'You’re past the 16-week plan. Keep repeating Phase 4, or set a new start date to run it again.' : 'Weeks count from the day you started the plan.'}</p>
+    <label class="field" for="set-start"><span class="label dim">Started on</span><input type="date" class="bare" id="set-start" value="${S.profile.startDate}" max="${todayISO()}"></label>
+    <div class="weeks">${rows}</div>
+    <p class="small" style="margin-top:22px">Dotted weeks are deloads: same exercises, half the sets, then retest your benchmarks.${S.profile.phase ? ' Your phase is set by hand, so the date only moves the week count.' : ''}</p>`,
+  () => { $('#set-start').onchange = e => { if (e.target.value) { S.profile.startDate = e.target.value; saveProfile(); renderAll(); openWeekSheet(); } }; });
+}
+function openSettings(){
+  const p = S.profile, vs = englishVoices(), chosen = pickVoice();
+  const ph = PHASES[currentPhase()], goalDesc = n => GOALS.find(g => g.n === n).d;
+  openSheet(`<h2 class="title">Preferences</h2><p class="sub">Your practice, and how the app guides you through it.</p>
+    <span class="label dim" style="margin-top:30px">Practice</span>
+    <div class="setrows" style="margin-top:6px">
+      <div class="setrow"><span>Starting point<small>Phase ${currentPhase()} · ${ph.n}${p.assess ? ', from your skill check' : ''}</small></span><button class="pill glass small" id="set-skill">${p.assess ? 'Retake' : 'Take skill check'}</button></div>
+    </div>
+    <div class="field" style="margin-top:14px"><span class="label dim">Days a week</span>
+      <div class="toggles" id="set-goal" role="radiogroup" aria-label="Days a week" style="margin-top:6px">${GOALS.map(g => `<button class="tog" role="radio" data-g="${g.n}" aria-pressed="${weeklyGoal() === g.n}" aria-checked="${weeklyGoal() === g.n}">${g.t}</button>`).join('')}</div>
+      <p class="small" id="set-goal-d" style="margin-top:8px">${goalDesc(weeklyGoal())}</p></div>
+    <span class="label dim" style="margin-top:34px">Sound</span>
+    <div class="setrows" style="margin-top:6px">
+      <div class="setrow"><span>Spoken cues<small>Names each exercise, and reads a cue halfway through long ones</small></span><button class="switch" role="switch" id="set-voice" aria-checked="${p.voice}" aria-label="Spoken cues"></button></div>
+      <div class="setrow"><span>Chimes<small>A soft bell between exercises, ticks in the last 3 s</small></span><button class="switch" role="switch" id="set-chime" aria-checked="${p.chime}" aria-label="Chimes"></button></div>
+    </div>
+    <label class="field" for="set-vname"><span class="label dim">Voice</span>
+      <select class="bare" id="set-vname"><option value="">Best available${chosen && !p.voiceName ? ' · ' + esc(chosen.name) : ''}</option>
+        ${vs.map(v => `<option value="${esc(v.name)}"${p.voiceName === v.name ? ' selected' : ''}>${esc(v.name)}${voiceScore(v) >= 10 ? ' ★' : ''}</option>`).join('')}</select></label>
+    <label class="field" for="set-rate"><span class="row between"><span class="label dim">Pace</span><span class="small" id="set-rate-v">${rateLabel(p.rate)}</span></span><input type="range" id="set-rate" min="0.75" max="1.1" step="0.05" value="${p.rate}"></label>
+    <button class="pill glass small" id="set-preview" style="align-self:flex-start;margin-top:22px">${I.sound} Preview voice</button>
+    <p class="small" style="margin-top:22px">★ marks enhanced voices. On iPhone, download Ava, Zoe or Evan (Premium) in Settings → Accessibility → Spoken Content → Voices, then pick it here.</p>
+    <span class="label dim" style="margin-top:34px">Your data</span>
+    <div class="setrows" style="margin-top:6px">
+      <div class="setrow"><span>Back up your log<small>${S.sessions.length} session${S.sessions.length === 1 ? '' : 's'}, saved as a file you can keep or move to a new phone</small></span><button class="pill glass small" id="set-export">Export</button></div>
+      <div class="setrow"><span>Restore from a backup<small>Adds sessions from a Still Point file. Nothing is overwritten.</small></span><button class="pill glass small" id="set-import">Import</button></div>
+    </div>
+    <input type="file" id="set-file" accept="application/json,.json" hidden>
+    <div class="grow"></div>
+    <button class="textbtn danger" id="set-clear" style="align-self:flex-start;margin-top:30px">Erase all sessions</button>
+    <p class="small">${synced ? 'Your log is saved to your account and follows you to other devices.' : 'Your log is saved on this device.'}</p>`,
+  () => {
+    $('#set-skill').onclick = () => { closeSheet(); setTimeout(() => openOnboarding(true), 260); };
+    document.querySelectorAll('#set-goal [data-g]').forEach(b => b.onclick = () => {
+      S.profile.goal = +b.dataset.g; saveProfile(); buzz(8);
+      document.querySelectorAll('#set-goal [data-g]').forEach(x => { x.setAttribute('aria-pressed', x === b); x.setAttribute('aria-checked', x === b); });
+      $('#set-goal-d').textContent = goalDesc(S.profile.goal); renderAll();
+    });
+    const rate = $('#set-rate'), paint = () => rate.style.setProperty('--p', ((rate.value - .75) / .35 * 100) + '%'); paint();
+    $('#set-vname').onchange = e => { S.profile.voiceName = e.target.value; saveProfile(); previewVoice(); };
+    rate.oninput = () => { S.profile.rate = +rate.value; $('#set-rate-v').textContent = rateLabel(S.profile.rate); paint(); };
+    rate.onchange = () => { saveProfile(); previewVoice(); };
+    $('#set-preview').onclick = previewVoice;
+    $('#set-voice').onclick = e => { S.profile.voice = !S.profile.voice; e.currentTarget.setAttribute('aria-checked', S.profile.voice); saveProfile(); };
+    $('#set-chime').onclick = e => { S.profile.chime = !S.profile.chime; e.currentTarget.setAttribute('aria-checked', S.profile.chime); saveProfile(); };
+    $('#set-export').onclick = exportLog;
+    $('#set-import').onclick = () => $('#set-file').click();
+    $('#set-file').onchange = e => { const f = e.target.files[0]; if (f) importLog(f); e.target.value = ''; };
+    $('#set-clear').onclick = e => {
+      if (e.currentTarget.dataset.armed) { [...S.sessions].forEach(s => deleteSession(s.id)); closeSheet(); renderAll(); toast('All sessions erased'); }
+      else { e.currentTarget.dataset.armed = '1'; e.currentTarget.textContent = 'Tap again to erase ' + S.sessions.length + ' sessions'; }
+    };
+  });
+}
+/* Backups: outside Claude the log lives on this device only, so it can be carried as a file. */
+function exportLog(){
+  const R = DEV.real || S;
+  const data = { app: 'still-point', version: 1, exported: new Date().toISOString(), profile: R.profile, sessions: R.sessions };
+  const name = 'still-point-' + todayISO() + '.json';
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const file = typeof File === 'function' ? new File([blob], name, { type: 'application/json' }) : null;
+  // iPhone home-screen apps can't download files; the share sheet's "Save to Files" can
+  if (file && navigator.canShare && navigator.canShare({ files: [file] }) && window.top === window) {
+    navigator.share({ files: [file], title: 'Still Point backup' }).catch(() => {});
+    return;
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  toast('Backup saved');
+}
+async function importLog(file){
+  if (DEV.real) { toast('Switch dev data back to My data first'); return; }
+  let data; try { data = JSON.parse(await file.text()); } catch (e) { toast('That file couldn’t be read'); return; }
+  const list = data && Array.isArray(data.sessions) ? data.sessions : null;
+  if (!list || data.app !== 'still-point') { toast('That isn’t a Still Point backup'); return; }
+  const have = new Set(S.sessions.map(s => s.id));
+  const fresh = list.filter(r => r && typeof r.id === 'string' && typeof r.ts === 'number' && typeof r.date === 'string' && !have.has(r.id));
+  fresh.forEach(r => { S.sessions.push(r); putRemote(r.id, Object.assign({kind:'session'}, r)); });
+  S.sessions.sort((a, b) => a.ts - b.ts);
+  // take the backup's setup only when this device hasn't been set up yet
+  if (data.profile && typeof data.profile === 'object' && (!S.profile.onboarded || !S.profile.assess)) {
+    const keep = { voiceName: S.profile.voiceName };
+    S.profile = Object.assign(S.profile, data.profile, keep, { onboarded: true });
+    putRemote('profile', Object.assign({kind:'profile'}, S.profile));
+  }
+  saveLocal(); closeSheet();
+  if (OB && !OB.edit) { OB = null; closeOverlay(); }
+  renderAll();
+  toast(fresh.length ? 'Restored ' + fresh.length + ' session' + (fresh.length === 1 ? '' : 's') : 'Everything was already here');
+}
+function openSessionDetail(id){ const s = S.sessions.find(x => x.id === id); if (s) swap(() => showDone(s, true)); }
+
+/* ================= Onboarding: skill check, weekly goal, starting phase ================= */
+/* Each question maps to one of the plan's benchmarks; together they test the phase gates. */
+const SKILLS = [
+  { k:'ctw', ask:'How long can you hold a chest-to-wall handstand?', hint:'Belly to the wall, hands about 10 cm out.',
+    opts:['Not yet', 'Under 30 seconds', '30 to 60 seconds', '60 seconds or more'] },
+  { k:'fs', ask:'And freestanding, away from the wall?', hint:'Your best of three tries.',
+    opts:['Not yet', 'A second or two', '5 to 15 seconds', '20 seconds or more'] },
+  { k:'comp', ask:'How many seated pike leg lifts can you do?', hint:'Legs straight, hands beside your knees, lift both heels.',
+    opts:['My heels won’t lift', 'A brief hover', 'A few reps', '8 or more'] },
+  { k:'neg', ask:'Can you lower down from a handstand slowly?', hint:'A straddle lowering with straight arms, no collapse.',
+    opts:['Haven’t tried it', 'Against a wall, about 3 seconds', 'Freestanding, landing softly', 'Freestanding, 5 seconds or slower'] },
+  { k:'press', ask:'Can you press up into a handstand?', hint:'Lifting into it with no jump.',
+    opts:['Not yet', 'From a high box', 'My toes float off the floor', 'A full press from the floor'] },
+];
+const GOALS = [
+  { n:2, t:'Two days', d:'Sessions A and B. One short, one long. Steady, sustainable progress.' },
+  { n:3, t:'Three days', d:'Sessions A, B and D. One short press day, two strength days.' },
+  { n:4, t:'Four days', d:'The full plan: A, B, C and D. The fastest route to your first press.' },
+];
+const ROTATION = { 2:['A','B'], 3:['A','B','D'], 4:['A','B','C','D'] };
+function weeklyGoal(){ return ROTATION[S.profile.goal] ? S.profile.goal : 4; }
+
+/* Walk the gates in order; a phase is earned only when every gate before it is passed. */
+function mapPhase(a){
+  const g1 = a.ctw >= 3 && a.neg >= 1 && a.comp >= 3;
+  const g2 = g1 && a.neg >= 2 && a.press >= 1;
+  const g3 = g2 && a.neg >= 3 && a.press >= 2;
+  let phase = g3 ? 4 : g2 ? 3 : g1 ? 2 : 1;
+  const why = [];
+  if (g1) why.push('You’ve passed the Foundation gate: a 60 s chest-to-wall hold, a controlled wall negative and 8 pike lifts.');
+  if (g2) why.push('You’ve passed the Lowering gate: a soft freestanding negative and an elevated press.');
+  if (g3) why.push('You’ve passed the Pressing gate: a slow freestanding negative and a toe hover.');
+  const volume = a.ctw < 2 || a.fs < 2;
+  if (volume && phase > 1) { phase = 1; why.length = 0; }
+  if (volume) why.push('Your handstand hold is still building, so you’ll start with Foundation and lean on handstand time for the first four weeks, as the plan recommends.');
+  else if (phase === 1) {
+    const miss = [];
+    if (a.ctw < 3) miss.push('a 60 s chest-to-wall hold');
+    if (a.neg < 1) miss.push('a controlled wall negative');
+    if (a.comp < 3) miss.push('8 pike lifts');
+    why.push('Foundation builds ' + miss.join(', ').replace(/, ([^,]*)$/, ' and $1') + ', the base every press stands on.');
+  }
+  return { phase, why };
+}
+
+let OB = null;
+function openOnboarding(edit){
+  const p = S.profile;
+  OB = { step: edit ? 1 : 0, edit: !!edit, a: Object.assign({}, p.assess || {}), goal: p.goal || 4 };
+  swap(() => renderOnboarding(true));
+}
+function renderOnboarding(first){
+  const o = $('#overlay'), total = SKILLS.length + 2, { step, a } = OB;
+  setMood(step === 0 ? 'home' : 'practice', step === 0 ? 'A' : 'C');
+  const r = 'rise';
+  const segs = Array.from({ length: total - 1 }, (_, i) => `<i class="${i < step ? 'on' : ''}"></i>`).join('');
+  const top = step === 0 ? '' : `<div class="topbar">${step > (OB.edit ? 1 : 0) ? `<button class="icon" id="ob-back" aria-label="Back">${I.back}</button>` : '<span class="icon"></span>'}
+      <div class="mid"><div class="obbar" aria-label="Step ${step} of ${total - 1}">${segs}</div></div>
+      ${OB.edit ? `<button class="icon" id="ob-x" aria-label="Close">${I.close}</button>` : '<span class="icon"></span>'}</div>`;
+  let body;
+  if (step === 0) {
+    body = `<div class="grow"></div>
+      <div class="hero ob-hero">
+        <span class="label ${r}">Still Point</span>
+        <h1 class="ask ${r}" style="--d:1;max-width:14ch">A calm companion for your first press handstand.</h1>
+        <p class="voice ${r}" style="--d:2;font-size:16px;margin-top:16px">A few questions about where you are now, and we’ll find your starting point in the plan.</p>
+      </div>
+      <div class="bottom-bar ${r}" style="--d:3;padding-top:34px"><button class="pill primary" id="ob-go">Begin</button></div>
+      <p class="small ${r}" style="--d:4;text-align:center;margin-top:12px">Takes about a minute</p>
+      <button class="textbtn ${r}" id="ob-restore" style="--d:5;align-self:center;margin-top:10px">Restore from a backup</button>
+      <input type="file" id="ob-file" accept="application/json,.json" hidden>`;
+  } else if (step <= SKILLS.length) {
+    const q = SKILLS[step - 1];
+    body = `<div class="grow" style="flex:.35"></div>
+      <span class="label dim ${r}">Skill check · ${step} of ${SKILLS.length}</span>
+      <h2 class="ask ${r}" style="--d:1;max-width:16ch">${q.ask}</h2>
+      <p class="small ${r}" style="--d:2;margin-top:10px;color:var(--ink-2)">${q.hint}</p>
+      <div class="oblist ${r}" style="--d:3" role="radiogroup" aria-label="${esc(q.ask)}">
+        ${q.opts.map((t, i) => `<button role="radio" data-opt="${i}" aria-checked="${a[q.k] === i}" aria-pressed="${a[q.k] === i}"><span>${esc(t)}</span><i></i></button>`).join('')}
+      </div>
+      <div class="grow"></div>`;
+  } else if (step === SKILLS.length + 1) {
+    body = `<div class="grow" style="flex:.35"></div>
+      <span class="label dim ${r}">Your week</span>
+      <h2 class="ask ${r}" style="--d:1;max-width:15ch">How many days a week will you practice?</h2>
+      <p class="small ${r}" style="--d:2;margin-top:10px;color:var(--ink-2)">This sets your weekly goal, which sessions we suggest, and how your streak counts.</p>
+      <div class="oblist ${r}" style="--d:3" role="radiogroup" aria-label="Days a week">
+        ${GOALS.map(g => `<button role="radio" data-goal="${g.n}" aria-checked="${OB.goal === g.n}" aria-pressed="${OB.goal === g.n}"><span><b>${g.t}</b>${g.n === 4 ? '<em class="sugpill" style="margin-left:10px">Recommended</em>' : ''}<small>${g.d}</small></span><i></i></button>`).join('')}
+      </div>
+      <div class="grow"></div>
+      <div class="bottom-bar dock ${r}" style="--d:4"><button class="pill primary" id="ob-next">Continue</button></div>`;
+  } else {
+    const m = mapPhase(a), ph = PHASES[m.phase], rot = ROTATION[OB.goal];
+    body = `<div class="grow" style="flex:.25"></div>
+      <div class="hero">
+        <span class="label ${r}">Your starting point</span>
+        <span class="numeral ${r}" style="--d:1;margin-top:10px">${m.phase}</span>
+        <p class="lede ${r}" style="--d:2;margin-top:8px">Phase ${m.phase} · ${ph.n}</p>
+        <p class="small ${r}" style="--d:2;margin-top:4px">Weeks ${ph.w} of the plan</p>
+      </div>
+      <div class="obwhy ${r}" style="--d:3">${m.why.map(w => `<p>${w}</p>`).join('')}<p class="gate">${ph.gate}</p></div>
+      <div class="stats ${r}" style="--d:4;margin-top:24px">
+        <div><b>${OB.goal} days</b><span>Each week</span></div>
+        <div><b>${rot.join(' · ')}</b><span>Sessions</span></div>
+      </div>
+      <div class="grow"></div>
+      <div class="bottom-bar dock ${r}" style="--d:5;flex-direction:column;gap:4px"><button class="pill primary wide" id="ob-done">${OB.edit ? 'Save changes' : 'Start training'}</button>
+        <button class="textbtn" id="ob-other">Choose a different phase</button></div>`;
+  }
+  o.innerHTML = `<div class="inner ob">${top}${body}</div>`;
+  o.hidden = false; o.scrollTop = 0;
+  const go = n => { OB.step = n; swap(() => renderOnboarding()); };
+  const b = $('#ob-back'); if (b) b.onclick = () => go(step - 1);
+  const x = $('#ob-x'); if (x) x.onclick = () => { OB = null; swap(() => { closeOverlay(); renderAll(); }); };
+  const g = $('#ob-go'); if (g) g.onclick = () => go(1);
+  const rs = $('#ob-restore'); if (rs) { rs.onclick = () => $('#ob-file').click(); $('#ob-file').onchange = e => { const f = e.target.files[0]; if (f) importLog(f); }; }
+  o.querySelectorAll('[data-opt]').forEach(btn => btn.onclick = () => {
+    a[SKILLS[step - 1].k] = +btn.dataset.opt; buzz(8);
+    o.querySelectorAll('[data-opt]').forEach(y => { y.setAttribute('aria-pressed', y === btn); y.setAttribute('aria-checked', y === btn); });
+    setTimeout(() => { if (OB && OB.step === step) go(step + 1); }, 360);
+  });
+  o.querySelectorAll('[data-goal]').forEach(btn => btn.onclick = () => {
+    OB.goal = +btn.dataset.goal; buzz(8);
+    o.querySelectorAll('[data-goal]').forEach(y => { y.setAttribute('aria-pressed', y === btn); y.setAttribute('aria-checked', y === btn); });
+  });
+  const nx = $('#ob-next'); if (nx) nx.onclick = () => go(step + 1);
+  const finish = (phase, then) => {
+    const p = S.profile, wasPhase = p.phase;
+    p.assess = Object.assign({}, a); p.goal = OB.goal; p.phase = phase; p.onboarded = true;
+    // a fresh start lines the program week up with the phase, so deloads and the week chip make sense
+    if (!OB.edit || (!S.sessions.length && wasPhase !== phase)) { const d = new Date(); d.setDate(d.getDate() - (phase - 1) * 28); p.startDate = isoDate(d); }
+    saveProfile(); const edit = OB.edit; OB = null;
+    swap(() => { closeOverlay(); goTab('home'); renderAll(); if (then) then(); }, edit ? null : 'exit');
+    toast(edit ? 'Preferences saved' : 'Welcome. Phase ' + phase + ' it is.');
+  };
+  const d = $('#ob-done'); if (d) d.onclick = () => finish(mapPhase(a).phase);
+  const oth = $('#ob-other'); if (oth) oth.onclick = () => finish(mapPhase(a).phase, () => setTimeout(openPhaseSheet, 500));
+}
+function maybeOnboard(){
+  if (S.profile.onboarded) return;
+  if (S.sessions.length) { S.profile.onboarded = true; saveProfile(); return; }   // existing log: don't interrupt
+  openOnboarding(false);
+}
+
+/* ================= Audio ================= */
+let actx = null;
+function audio(){ if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (actx && actx.state === 'suspended') actx.resume(); return actx; }
+function bell(freqs, dur, vol){
+  if (!S.profile.chime) return; const a = audio(); if (!a) return;
+  const t0 = a.currentTime;
+  freqs.forEach((f, i) => {
+    const o = a.createOscillator(), g = a.createGain();
+    o.type = 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol / (i + 1), t0 + .02); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+    o.connect(g).connect(a.destination); o.start(t0); o.stop(t0 + dur + .05);
+  });
+}
+const chime = () => bell([528, 792, 1056], 2.4, .18);
+const tick = () => bell([880], .25, .06);
+/* Voice: the device's speech engine, steered toward its most natural English voice. */
+const NOVELTY = /albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|fred|junior|ralph|kathy|grandma|grandpa|eddy|flo\b|reed|rocko|sandy|shelley/i;
+let voiceList = [];
+function loadVoices(){ try { voiceList = speechSynthesis.getVoices(); } catch (e) { voiceList = []; } }
+if ('speechSynthesis' in window) { loadVoices(); try { speechSynthesis.addEventListener('voiceschanged', loadVoices); } catch (e) {} }
+function englishVoices(){ return voiceList.filter(v => /^en[-_]/i.test(v.lang) && !NOVELTY.test(v.name)).sort((a, b) => voiceScore(b) - voiceScore(a)); }
+function voiceScore(v){
+  let s = 0; const n = v.name;
+  if (/premium|enhanced|natural|neural/i.test(n)) s += 10;
+  if (/online/i.test(n)) s += 4;
+  if (/google/i.test(n)) s += 4;
+  if (/ava|zoe|evan|samantha|serena|aria|jenny|libby|sonia|allison|susan|karen|moira|daniel/i.test(n)) s += 3;
+  if (/en[-_](US|GB|AU|IE)/i.test(v.lang)) s += 1;
+  return s;
+}
+function pickVoice(){
+  const vs = englishVoices();
+  return (S.profile.voiceName && vs.find(v => v.name === S.profile.voiceName)) || vs[0] || null;
+}
+function rateLabel(r){ return r < .85 ? 'Unhurried' : r < .97 ? 'Calm' : 'Brisk'; }
+/* Turn program shorthand into how a coach would say it. */
+function spoken(t){
+  return String(t)
+    .replace(/(\d+)\s*×\s*1(?![\d–\s]*s\b)(?!\d)/g, '$1 single reps')
+    .replace(/(\d+)\s*×\s*/g, '$1 sets of ')
+    .replace(/(\d+)\s*s\b/g, '$1 seconds')
+    .replace(/(\d+)\s*cm\b/g, '$1 centimetres')
+    .replace(/(\d)\s*–\s*(\d)/g, '$1 to $2')
+    .replace(/↔/g, ' to ').replace(/→/g, ', then ').replace(/~/g, 'about ')
+    .replace(/\s*·\s*/g, '. ').replace(/\s*\/\s*/g, ' or ')
+    .replace(/\bHSPU\b/g, 'handstand push-up').replace(/\bDB\b/g, 'dumbbell');
+}
+let lastSpeak = 0;
+function say(parts, force){
+  if ((!S.profile.voice && !force) || !('speechSynthesis' in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const v = pickVoice(), list = [].concat(parts).filter(Boolean);
+    list.forEach((txt, i) => {
+      const u = new SpeechSynthesisUtterance(spoken(txt));
+      if (v) { u.voice = v; u.lang = v.lang; }
+      u.rate = S.profile.rate || .92; u.pitch = .96; u.volume = .95;
+      speechSynthesis.speak(u);
+    });
+    lastSpeak = Date.now();
+  } catch (e) {}
+}
+function previewVoice(){ say(['Next up. Wall-assisted straddle press negatives.', '4 × 1.', 'Lower in 3–5 s, to soft feet.'], true); }
+
+/* ================= Player ================= */
+let P = null, wake = null;
+function startPlayer(key){
+  closeSheet();
+  const phase = currentPhase();
+  const steps = [{block:'Settle in', name:'Get ready', dose:'Find your space', cue:'Mat, wall and box within reach. Breathe out slowly.', dur:10, ready:true}].concat(buildSteps(key, phase));
+  P = { key, phase, week: programWeek(), steps, i:0, left: steps[0].dur, running:true, last: performance.now(), elapsed:0, doneIdx: new Set() };
+  audio();
+  try { navigator.wakeLock && navigator.wakeLock.request('screen').then(l => wake = l).catch(() => {}); } catch (e) {}
+  setMood('player', key);
+  renderPlayer(true);
+  setTimeout(() => { if (P && P.key === key) say(['Session ' + key + '.', 'Take a moment to set up.', steps[1].block + ' first, starting with ' + steps[1].name + '.']); }, 1400);
+  P.timer = setInterval(playerTick, 200);
+}
+function playerTick(){
+  if (!P) return;
+  const now = performance.now(), dt = (now - P.last) / 1000 * DEV.speed; P.last = now;
+  if (!P.running) return;
+  const before = Math.ceil(P.left);
+  P.left -= dt; if (!P.steps[P.i].ready) P.elapsed += dt;
+  const after = Math.ceil(P.left);
+  if (after !== before && after <= 3 && after > 0) tick();
+  const cur = P.steps[P.i];
+  if (!cur.ready && !cur.halfSaid && cur.dur >= 90 && P.left <= cur.dur / 2) { cur.halfSaid = true; say(['Halfway.', cur.cue.split('. ')[0] + '.']); }
+  if (P.left <= 0) { if (!cur.ready) P.doneIdx.add(P.i); advance(1); return; }
+  updatePlayer();
+}
+function advance(dir){
+  const n = P.i + dir;
+  if (dir > 0 && !P.steps[P.i].ready) P.doneIdx.add(P.i);
+  if (n >= P.steps.length) { finishPlayer(true); return; }
+  if (n < 0) return;
+  P.i = n; P.left = P.steps[n].dur;
+  chime(); buzz(25);
+  const s = P.steps[n], prevBlock = P.steps[n - dir] && P.steps[n - dir].block;
+  say([s.block !== prevBlock ? s.block + '.' : 'Next.', s.name + '.', s.dose + '.']);
+  renderPlayer();
+}
+function playerBlocks(){
+  const out = [];
+  P.steps.forEach((s, i) => { if (s.ready) return; const l = out[out.length-1]; if (l && l.name === s.block) { l.dur += s.dur; l.end = i; } else out.push({name:s.block, dur:s.dur, start:i, end:i}); });
+  return out;
+}
+function renderPlayer(first){
+  const o = $('#overlay'), s = P.steps[P.i], nx = P.steps[P.i + 1], blocks = playerBlocks();
+  const bi = blocks.findIndex(b => P.i >= b.start && P.i <= b.end), C = 2 * Math.PI * 48;
+  o.innerHTML = `<div class="inner${P.running ? '' : ' paused'}${first ? ' arriving' : ''}">
+    <div class="topbar">
+      <button class="icon" id="p-end" aria-label="End session">${I.close}</button>
+      <div class="mid"><span class="label">${esc(s.block)}${bi >= 0 ? ' · ' + (bi + 1) + ' of ' + blocks.length : ''}</span><small>Session ${P.key}${isDeload() ? ' · <span class="deload-tag">deload, half the sets</span>' : ''}</small></div>
+      <button class="icon" id="p-voice" aria-label="Spoken cues ${S.profile.voice ? 'on' : 'off'}">${S.profile.voice ? I.sound : I.mute}</button>
+    </div>
+    <div class="ptrack" id="p-prog">${blocks.map(b => `<div style="flex:${b.dur}"><i></i></div>`).join('')}</div>
+    <p class="pmeta" id="p-rem"></p>
+    <div class="stage" aria-live="polite">
+      <div class="dial" ${s.code ? `data-ex="${s.code}" role="button" tabindex="0" aria-label="About ${esc(s.name)}" style="cursor:pointer"` : ''}>
+        <div class="orb"></div>
+        <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="ring" cx="50" cy="50" r="48"/><circle class="arc" id="p-arc" cx="50" cy="50" r="48" transform="rotate(-90 50 50)" stroke-dasharray="${C}" stroke-dashoffset="${C}"/><circle class="dot" id="p-dot" cx="50" cy="2" r="1.6"/></svg>
+        <div class="t"><span class="numeral" id="p-time">${fmtClock(P.left)}</span><small>${P.running ? 'remaining' : 'paused'}</small></div>
+      </div>
+      <h2 class="ex-name rise" style="--d:1">${esc(s.name)}</h2>
+      <p class="ex-dose rise" style="--d:2">${s.code ? `<span class="label">${s.code}</span>` : ''}<span>${esc(s.dose)}</span></p>
+      <p class="ex-cue voice rise" style="--d:3">${esc(s.cue)}</p>
+    </div>
+    <p class="nextline">${nx ? 'Next · <b>' + esc(nx.name) + '</b>' : 'Next · <b>check in</b>'}</p>
+    <div class="controls">
+      <button class="circle" id="p-prev" aria-label="Previous exercise">${I.prev}</button>
+      <button class="circle solid" id="p-play" aria-label="${P.running ? 'Pause' : 'Resume'}">${P.running ? I.pause : I.play}</button>
+      <button class="circle" id="p-next" aria-label="Next exercise">${I.next}</button>
+    </div>
+    <div class="pfoot"><button class="addtime" id="p-add" aria-label="Add 30 seconds to this exercise">${I.plus}30 s</button></div>
+  </div>`;
+  o.hidden = false;
+  $('#p-play').onclick = () => { P.running = !P.running; P.last = performance.now(); buzz(10); renderPlayer(); };
+  $('#p-next').onclick = () => advance(1);
+  $('#p-prev').onclick = () => advance(-1);
+  $('#p-add').onclick = () => { P.left += 30; P.steps[P.i].dur += 30; renderProgressOnly(); updatePlayer(); toast('+30 s'); };
+  $('#p-voice').onclick = () => { S.profile.voice = !S.profile.voice; saveProfile(); if (!S.profile.voice) try { speechSynthesis.cancel(); } catch (e) {} renderPlayer(); };
+  $('#p-end').onclick = confirmEnd;
+  const d = o.querySelector('.dial[data-ex]');
+  if (d) { const op = () => { if (P.running) { P.running = false; renderPlayer(); } openExercise(d.dataset.ex); }; d.onclick = op; d.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); op(); } }; }
+  updatePlayer();
+}
+function renderProgressOnly(){ const blocks = playerBlocks(); document.querySelectorAll('#p-prog > div').forEach((el, i) => el.style.flex = blocks[i].dur); }
+function updatePlayer(){
+  if (!P) return;
+  const s = P.steps[P.i], C = 2 * Math.PI * 48, frac = Math.min(1, Math.max(0, 1 - P.left / s.dur));
+  const arc = $('#p-arc'); if (arc) arc.setAttribute('stroke-dashoffset', String(C * (1 - frac)));
+  const dot = $('#p-dot'); if (dot) { const a = frac * Math.PI * 2 - Math.PI / 2; dot.setAttribute('cx', (50 + 48 * Math.cos(a)).toFixed(2)); dot.setAttribute('cy', (50 + 48 * Math.sin(a)).toFixed(2)); }
+  const tm = $('#p-time'); if (tm) tm.textContent = fmtClock(P.left);
+  const blocks = playerBlocks();
+  document.querySelectorAll('#p-prog i').forEach((el, bi) => {
+    const b = blocks[bi]; let done = 0;
+    for (let k = b.start; k <= b.end; k++) done += k < P.i ? P.steps[k].dur : k === P.i ? P.steps[k].dur - Math.max(0, P.left) : 0;
+    el.style.width = Math.min(100, done / b.dur * 100) + '%';
+  });
+  const totalLeft = P.steps.slice(P.i + 1).reduce((a, x) => a + x.dur, 0) + Math.max(0, P.left);
+  const rm = $('#p-rem'); if (rm) rm.textContent = fmtClock(P.elapsed) + ' in · ' + fmtClock(totalLeft) + ' to go';
+}
+function confirmEnd(){
+  const wasRunning = P.running; P.running = false; renderPlayer();
+  openSheet(`<div class="confirm"><h2 class="title">End this session?</h2>
+    <p class="sub">You’ve done ${P.doneIdx.size} of ${P.steps.length - 1} exercises. Log what you did, or let it go.</p>
+    <div class="stack"><button class="pill primary" id="e-log">End and check in</button><button class="pill glass" id="e-resume">Keep going</button><button class="textbtn danger" id="e-discard">Discard session</button></div></div>`,
+  w => {
+    $('#e-log').onclick = () => { closeSheet(); finishPlayer(false); };
+    $('#e-resume').onclick = () => { closeSheet(); P.running = true; P.last = performance.now(); renderPlayer(); };
+    $('#e-discard').onclick = () => { closeSheet(); stopPlayer(); };
+    w.querySelector('[data-close]').onclick = () => { closeSheet(); P.running = wasRunning; P.last = performance.now(); renderPlayer(); };
+  });
+}
+function releasePlayer(){ if (P) clearInterval(P.timer); P = null; try { wake && wake.release(); } catch (e) {} wake = null; }
+function stopPlayer(){ releasePlayer(); try { speechSynthesis.cancel(); } catch (e) {} swap(() => { closeOverlay(); renderAll(); }, 'exit'); }
+function finishPlayer(complete){
+  clearInterval(P.timer);
+  if (complete) { bell([396, 528, 660, 792], 4, .2); buzz([30, 60, 30]); say(['That’s the session.', 'Shake out your wrists, and take a breath.']); }
+  const rec = { id: 's' + Date.now(), ts: Date.now(), date: todayISO(), key: P.key, phase: P.phase, week: P.week,
+    secs: Math.round(P.elapsed), done: P.doneIdx.size, total: P.steps.length - 1, complete };
+  releasePlayer();
+  showCheckin(rec);
+}
+
+/* ================= Check-in: three short steps ================= */
+let CI = null;
+function showCheckin(rec){
+  CI = { rec, step: 0, more: false, d: { feel:'', energy:6, effort:6, pain:[], milestones:[], fs:'', ctw:'', notes:'' } };
+  swap(() => renderCheckin(true));
+}
+function renderCheckin(first){
+  const { rec, step, d } = CI, o = $('#overlay');
+  setMood('checkin', rec.key);
+  const dots = [0,1].map(i => `<i class="${i === step ? 'on' : ''}"></i>`).join('');
+  let body = '';
+  if (step === 0) {
+    body = `<span class="label dim rise">Session ${rec.key} · ${fmtMins(rec.secs)}</span>
+      <h2 class="ask rise" style="--d:1">How did that feel?</h2>
+      <div class="feels rise" style="--d:2" role="radiogroup" aria-label="How did it feel">${FEELS.map(([n, sz]) => `<button role="radio" data-feel="${n}" aria-pressed="${d.feel === n}" aria-checked="${d.feel === n}"><span class="o"><i style="width:${sz}px;height:${sz}px"></i></span>${n}</button>`).join('')}</div>`;
+    const scale = (k, label, lo, hi) => `<div class="scale"><div class="row between"><label class="label dim" for="ci-${k}">${label}</label><span class="numeral" id="ci-${k}-v">${d[k]}<small>/10</small></span></div>
+      <input type="range" id="ci-${k}" min="1" max="10" value="${d[k]}" style="--p:${(d[k]-1)/9*100}%"><div class="ends"><span>${lo}</span><span>${hi}</span></div></div>`;
+    body += `
+      <div class="rise" style="--d:3">${scale('energy', 'Energy', 'Drained', 'Charged')}</div>
+      <div class="rise" style="--d:4">${scale('effort', 'Effort', 'Easy', 'All out')}</div>`;
+  } else {
+    const earned = earnedMilestones();
+    body = `<h2 class="ask rise">Anything to remember?</h2>
+      <textarea class="bare rise" style="--d:1;margin-top:28px" id="ci-notes" placeholder="What clicked, what to change next time">${esc(d.notes)}</textarea>
+      <button class="reveal rise" style="--d:2" id="ci-more" aria-expanded="${CI.more}">${I.plus} Benchmarks, milestones, discomfort</button>
+      ${CI.more ? `<div class="more rise">
+        <div class="pair"><label for="ci-fs">Freestanding hold<input class="bare num" type="number" inputmode="numeric" min="0" max="600" id="ci-fs" placeholder="— s" value="${esc(d.fs)}"></label>
+          <label for="ci-ctw">Chest-to-wall hold<input class="bare num" type="number" inputmode="numeric" min="0" max="900" id="ci-ctw" placeholder="— s" value="${esc(d.ctw)}"></label></div>
+        <div style="display:flex;flex-direction:column;gap:12px"><span class="label dim">Milestones</span><div class="toggles">${MILESTONES.filter(m => !earned.has(m)).map(m => `<button class="tog" data-ms="${esc(m)}" aria-pressed="${d.milestones.includes(m)}">${esc(m)}</button>`).join('')}</div></div>
+        <div style="display:flex;flex-direction:column;gap:12px"><span class="label dim">Discomfort</span><div class="toggles">${PAINS.map(p => `<button class="tog" data-pain="${p}" aria-pressed="${d.pain.includes(p)}">${p}</button>`).join('')}</div>
+          ${d.pain.length ? '<p class="help">If wrists hurt past the session, back off. If shoulders or elbows ache two sessions running, swap the press block for compression and flexibility for a week.</p>' : ''}</div>
+      </div>` : ''}`;
+  }
+  o.innerHTML = `<div class="inner">
+    <div class="topbar">${step ? `<button class="icon" id="ci-back" aria-label="Back">${I.back}</button>` : '<span class="icon"></span>'}
+      <div class="mid"><div class="steps" aria-label="Step ${step + 1} of 2">${dots}</div></div>
+      <button class="textbtn" id="ci-skip" style="min-width:44px">${step ? '' : 'Skip'}</button></div>
+    <div class="grow" style="flex:.35"></div>
+    ${body}
+    <div class="grow"></div>
+    <div class="bottom-bar dock rise" style="--d:3"><button class="pill primary" id="ci-go">${step ? 'Save session' : 'Continue'}</button></div>
+  </div>`;
+  o.hidden = false;
+  if (first) o.scrollTop = 0;
+  const go = n => { CI.step = n; swap(() => renderCheckin()); };
+  $('#ci-go').onclick = () => step ? saveCheckin() : go(1);
+  $('#ci-skip').onclick = () => { if (!step) saveCheckin(); };
+  const back = $('#ci-back'); if (back) back.onclick = () => go(step - 1);
+  o.querySelectorAll('[data-feel]').forEach(b => b.onclick = () => { d.feel = b.dataset.feel; buzz(10);
+    o.querySelectorAll('[data-feel]').forEach(x => { x.setAttribute('aria-pressed', x === b); x.setAttribute('aria-checked', x === b); });
+  });
+  ['energy','effort'].forEach(k => { const el = $('#ci-' + k); if (!el) return;
+    el.oninput = () => { d[k] = +el.value; el.style.setProperty('--p', (d[k]-1)/9*100 + '%'); $('#ci-' + k + '-v').innerHTML = d[k] + '<small>/10</small>'; }; });
+  const notes = $('#ci-notes'); if (notes) notes.oninput = () => d.notes = notes.value;
+  ['fs','ctw'].forEach(k => { const el = $('#ci-' + k); if (el) el.oninput = () => d[k] = el.value; });
+  const more = $('#ci-more'); if (more) more.onclick = () => { CI.more = !CI.more; renderCheckin(); };
+  o.querySelectorAll('[data-ms]').forEach(b => b.onclick = () => { const m = b.dataset.ms, on = !d.milestones.includes(m);
+    d.milestones = on ? d.milestones.concat(m) : d.milestones.filter(x => x !== m); b.setAttribute('aria-pressed', on); });
+  o.querySelectorAll('[data-pain]').forEach(b => b.onclick = () => { const p = b.dataset.pain, on = !d.pain.includes(p);
+    d.pain = on ? d.pain.concat(p) : d.pain.filter(x => x !== p); renderCheckin(); });
+}
+function saveCheckin(){
+  const { rec, d } = CI, fs = parseInt(d.fs, 10), ctw = parseInt(d.ctw, 10);
+  Object.assign(rec, { feel: d.feel, energy: d.energy, effort: d.effort, pain: d.pain, milestones: d.milestones,
+    bench: { fs: fs > 0 ? fs : null, ctw: ctw > 0 ? ctw : null }, notes: d.notes.trim() });
+  CI = null;
+  saveSession(rec);
+  swap(() => showDone(rec, false, true), 'exit');
+}
+
+/* ================= Done + share ================= */
+const FEEL_LINES = {
+  Rough: 'Hard days count. You showed up anyway.',
+  Heavy: 'Heavy days build the base for light ones.',
+  Steady: 'Steady work. This is how presses are built.',
+  Light: 'Light and fresh. Remember this feeling.',
+  Flowing: 'That one flowed. Bank the feeling.',
+};
+function shareText(rec){
+  const st = streakInfo(), lines = [
+    'Handstand press practice · ' + niceDate(rec.date),
+    'Session ' + rec.key + ' (' + META[rec.key].n + ') · ' + fmtMins(rec.secs),
+    'Phase ' + rec.phase + ' · ' + PHASES[rec.phase].n + ', week ' + rec.week,
+  ];
+  if (rec.feel) lines.push('Felt ' + rec.feel.toLowerCase() + ' · energy ' + rec.energy + '/10');
+  if (rec.bench && rec.bench.fs) lines.push('Freestanding hold: ' + rec.bench.fs + ' s');
+  if (rec.bench && rec.bench.ctw) lines.push('Chest-to-wall hold: ' + rec.bench.ctw + ' s');
+  if (rec.milestones && rec.milestones.length) lines.push('New milestone: ' + rec.milestones.join(', '));
+  if (st.cur > 1) lines.push(st.cur + '-session streak');
+  return lines.join('\n');
+}
+const clock = d => d.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+function showDone(rec, fromJournal, landing){
+  releasePlayer(); closeSheet();
+  const st = streakInfo(), end = new Date(rec.ts), start = new Date(rec.ts - (rec.secs || 0) * 1000), day = parseISO(rec.date);
+  const text = shareText(rec), enc = encodeURIComponent(text), o = $('#overlay');
+  const ms = rec.milestones && rec.milestones[0];
+  const lede = fromJournal && rec.notes ? '“' + esc(rec.notes) + '”' : ms ? esc(ms) + '.' : FEEL_LINES[rec.feel] || 'Another session in the bank.';
+  const voice = ms && !(fromJournal && rec.notes) ? 'New milestone, Phase ' + rec.phase : 'Phase ' + rec.phase + ' · ' + PHASES[rec.phase].n + ', week ' + rec.week;
+  setMood('done', rec.key);
+  o.innerHTML = `<div class="inner${landing ? ' landing' : ''}">
+    <div class="done-top rise"><div><h2 class="title">${fromJournal ? 'Session ' + rec.key : 'Session ' + rec.key + ' complete'}</h2><p class="small">${clock(start)} – ${clock(end)}</p></div>
+      ${fromJournal ? `<button class="icon" id="d-x" aria-label="Close" style="margin-right:-10px">${I.close}</button>` : ''}</div>
+    <div class="grow"></div>
+    <div class="done-hero">
+      <span class="numeral rise" style="--d:1">${fromJournal ? String(day.getDate()).padStart(2, '0') : st.cur}</span>
+      <span class="label rise" style="--d:2">${fromJournal ? day.toLocaleDateString(undefined, {month:'short', year:'numeric'}) : st.cur === 1 ? 'Session streak begins' : 'Session streak'}</span>
+      <p class="lede rise" style="--d:3">${lede}</p>
+      <hr class="rule rise" style="--d:4">
+      <p class="voice rise" style="--d:4">${voice}</p>
+      <div class="stats rise" style="--d:5">
+        <div><b>${fmtMins(rec.secs || 0)}</b><span>Duration</span></div>
+        ${rec.feel ? `<div><b>${rec.feel}</b><span>Felt</span></div>` : ''}
+        <div><b>${rec.energy || '–'}/10</b><span>Energy</span></div>
+      </div>
+    </div>
+    <div id="d-share"></div>
+    <div class="grow" style="flex:.5"></div>
+    <div class="bottom-bar rise" style="--d:6">
+      <button class="circle" id="d-sharebtn" aria-label="Share with a friend" aria-expanded="false">${I.share}</button>
+      <button class="pill primary" id="d-done">${fromJournal ? 'Close' : 'Done'}</button>
+    </div>
+    ${fromJournal ? '<button class="textbtn danger" id="d-del" style="align-self:center;margin-top:6px">Delete session</button>' : ''}
+  </div>`;
+  o.hidden = false; o.scrollTop = 0;
+  const close = () => swap(() => { closeOverlay(); ui.key = null; ui.len = null; renderAll(); });
+  $('#d-done').onclick = close; const x = $('#d-x'); if (x) x.onclick = close;
+  $('#d-sharebtn').onclick = e => {
+    // installed app: hand off to the system share sheet (Messages, WhatsApp...); otherwise show the share card
+    if (navigator.share && window.top === window && !e.currentTarget.dataset.fallback) {
+      const btn = e.currentTarget;
+      navigator.share({ text }).catch(err => { if (err && err.name !== 'AbortError') { btn.dataset.fallback = '1'; btn.click(); } });
+      return;
+    }
+    const box = $('#d-share'), open = !box.innerHTML;
+    e.currentTarget.setAttribute('aria-expanded', open);
+    box.innerHTML = open ? `<div class="share glass"><span class="label dim">Share with a friend</span><pre id="d-text">${esc(text)}</pre>
+      <div class="acts"><a href="https://wa.me/?text=${enc}" target="_blank" rel="noopener">${I.wa}WhatsApp</a><a href="sms:?&body=${enc}">${I.msg}Text</a><button id="d-copy">${I.copy}Copy</button></div></div>` : '';
+    if (open) { setTimeout(() => box.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest'}), 50);
+      $('#d-copy').onclick = () => {
+        const fallback = () => { const r = document.createRange(); r.selectNodeContents($('#d-text')); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); toast('Selected. Copy it from here'); };
+        try { navigator.clipboard.writeText(text).then(() => toast('Copied'), fallback); } catch (err) { fallback(); }
+      }; }
+  };
+  const del = $('#d-del');
+  if (del) del.onclick = () => { if (del.dataset.armed) { deleteSession(rec.id); toast('Session deleted'); close(); } else { del.dataset.armed = '1'; del.textContent = 'Tap again to delete'; } };
+}
+
+/* ================= Shell ================= */
+function toast(msg){
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; t.setAttribute('role','status');
+  dev$.appendChild(t); setTimeout(() => t.remove(), 1800);
+}
+function renderAll(){ if (ui.tab === 'home') renderHome(); else if (ui.tab === 'journal') renderJournal(); else renderLibrary(); }
+const TABS = ['home', 'journal', 'library'];
+function goTab(name){
+  const apply = () => {
+    resetDrag();
+    ui.tab = name;
+    document.querySelectorAll('.tab').forEach(x => x.dataset.tab === name ? x.setAttribute('aria-current', 'page') : x.removeAttribute('aria-current'));
+    ['home','journal','library'].forEach(k => $('#v-' + k).hidden = k !== ui.tab);
+    $('#scroll').scrollTop = 0;
+    renderAll();
+  };
+  if (name === ui.tab || !$('#overlay').hidden) apply();
+  else swapTab(apply, TABS.indexOf(name) > TABS.indexOf(ui.tab) ? 'tab-next' : 'tab-prev');
+}
+/* Tab changes slide the page sideways; the backdrop and tab bar stay put. */
+function swapTab(fn, type){
+  if (!document.startViewTransition || reduceMotion) { fn(); return; }
+  const root = document.documentElement, page = $('#scroll'), bar = $('.tabbar');
+  page.style.viewTransitionName = 'page'; bar.style.viewTransitionName = 'tabbar'; root.dataset.vt = type;
+  try { document.startViewTransition(fn).finished.finally(() => { page.style.viewTransitionName = bar.style.viewTransitionName = ''; if (root.dataset.vt === type) delete root.dataset.vt; }); }
+  catch (e) { page.style.viewTransitionName = bar.style.viewTransitionName = ''; delete root.dataset.vt; fn(); }
+}
+/* Swipe between Today, Progress and Library: the page follows the finger, then commits or springs back. */
+function resetDrag(){ const page = $('#scroll'); page.style.transition = page.style.transform = page.style.opacity = ''; }
+(() => {
+  const page = $('#scroll'); let sx = null, sy = 0, dx = 0, t0 = 0, mode = null;
+  page.addEventListener('touchstart', e => {
+    if (!$('#overlay').hidden || !$('#sheetwrap').hidden || e.touches.length > 1 || e.target.closest('.ltabs, input, textarea, select')) { sx = null; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; dx = 0; t0 = performance.now(); mode = null;
+  }, {passive:true});
+  page.addEventListener('touchmove', e => {
+    if (sx === null) return;
+    dx = e.touches[0].clientX - sx; const dy = e.touches[0].clientY - sy;
+    if (!mode) { if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.3) mode = 'h'; else if (Math.abs(dy) > 12) { mode = 'v'; return; } else return; }
+    if (mode !== 'h') return;
+    const i = TABS.indexOf(ui.tab), edge = (dx > 0 && i === 0) || (dx < 0 && i === TABS.length - 1);
+    const eff = edge ? dx * .22 : dx * .6;
+    page.style.transition = 'none'; page.style.transform = `translateX(${eff.toFixed(1)}px)`; page.style.opacity = (1 - Math.min(.4, Math.abs(eff) / 520)).toFixed(3);
+  }, {passive:true});
+  const end = () => {
+    if (sx === null) return; sx = null;
+    if (mode !== 'h') return;
+    const i = TABS.indexOf(ui.tab), fast = Math.abs(dx) > 35 && performance.now() - t0 < 260;
+    const step = (dx < -70 || (fast && dx < 0)) ? 1 : (dx > 70 || (fast && dx > 0)) ? -1 : 0, next = TABS[i + step];
+    if (step && next) { buzz(8); goTab(next); }
+    else { page.style.transition = 'transform .45s cubic-bezier(.2,.8,.2,1), opacity .45s'; page.style.transform = ''; page.style.opacity = ''; }
+  };
+  page.addEventListener('touchend', end); page.addEventListener('touchcancel', end);
+})();
+document.querySelectorAll('.tab').forEach(b => b.onclick = () => goTab(b.dataset.tab));
+
+/* ================= Dev controls ================= */
+function devSample(kind){
+  const base = { profile: Object.assign({}, (DEV.real || S).profile, { phase: 0 }), sessions: [] };
+  if (kind === 'new') { base.profile.startDate = todayISO(); return base; }
+  const start = new Date(); start.setDate(start.getDate() - 38);
+  base.profile.startDate = isoDate(start);
+  const plan = {1:'A', 2:'B', 4:'C', 6:'D'}, feels = ['Steady','Light','Heavy','Flowing','Light','Steady','Rough','Light'];
+  const notes = ['Elbows stayed locked on every negative.', 'Wrists a bit stiff. Longer warm-up next time.', 'Felt the lean finally, shoulders past fingertips.', '', 'Box press felt floaty at the top.', '', 'Tired from work, kept it short.', 'Filmed a set. Hips were behind the shoulders.'];
+  const ms = {3:'45 s chest-to-wall', 7:'3 s controlled wall negative', 11:'First 10 s freestanding', 15:'60 s chest-to-wall', 18:'Filmed a set from the side'};
+  let n = 0;
+  const lastDay = kind === 'today' ? 0 : 1;
+  for (let back = 38; back >= lastDay; back--) {
+    const d = new Date(); d.setDate(d.getDate() - back);
+    let key = plan[d.getDay()];
+    if (back === 0) key = base.sessions.length ? 'ABCD'[('ABCD'.indexOf(base.sessions[base.sessions.length - 1].key) + 1) % 4] : 'A';
+    if (!key || (back > 7 && (back * 7) % 11 === 3)) continue;
+    n++;
+    const week = Math.floor((38 - back) / 7) + 1, phase = Math.min(4, Math.ceil(week / 4)), len = META[key].len;
+    base.sessions.push({ id: 'dev' + n, ts: d.getTime(), date: isoDate(d), key, phase, week, secs: len * 60 - (n % 3) * 40, done: 9, total: 9, complete: true,
+      feel: feels[n % feels.length], energy: 4 + (n * 3) % 6, effort: 5 + (n * 2) % 5, pain: n % 9 === 4 ? ['Wrists'] : [],
+      milestones: ms[n] ? [ms[n]] : [], bench: n % 4 === 0 ? { fs: Math.min(18, 3 + n), ctw: Math.min(80, 38 + n * 2) } : { fs: null, ctw: null }, notes: notes[n % notes.length] });
+  }
+  return base;
+}
+function devUseData(kind){
+  if (kind === 'real') { if (DEV.real) { S = DEV.real; DEV.real = null; } }
+  else { if (!DEV.real) DEV.real = S; S = devSample(kind); }
+  DEV.sample = kind;
+  const fab = document.querySelector('.devfab'); if (fab) fab.classList.toggle('sample', kind !== 'real');
+}
+function devReset(){
+  closeSheet();
+  if (P) { clearInterval(P.timer); P = null; try { speechSynthesis.cancel(); } catch (e) {} }
+  const o = $('#overlay'); o.hidden = true; o.innerHTML = '';
+  horizonTarget = .56; intensity = 0; ui.key = null; ui.len = null;
+}
+function devRec(){
+  const last = S.sessions[S.sessions.length - 1], key = suggestNext();
+  return last && DEV.sample !== 'real' ? last : { id: 'devrec' + Date.now(), ts: Date.now(), date: todayISO(), key, phase: currentPhase(), week: programWeek(),
+    secs: META[key].len * 60, done: 9, total: 9, complete: true, feel: 'Light', energy: 7, effort: 6, pain: [], milestones: ['First 10 s freestanding'], bench: { fs: 11, ctw: 62 }, notes: 'Preview session', dev: true };
+}
+const DEV_VIEWS = [
+  ['Screens', [
+    ['Home', () => goTab('home')],
+    ['Onboarding', () => openOnboarding(false)],
+    ['Edit skill check', () => openOnboarding(true)],
+    ['Practice · 15', () => { goTab('home'); ui.len = 15; ui.key = null; renderPractice(true); }],
+    ['Practice · 45', () => { goTab('home'); ui.len = 45; ui.key = null; renderPractice(true); }],
+    ['Progress', () => goTab('journal')],
+  ]],
+  ['Workout', [
+    ['Player A', () => startPlayer('A')], ['Player B', () => startPlayer('B')], ['Player C', () => startPlayer('C')], ['Player D', () => startPlayer('D')],
+    ['Player · last exercise', () => { startPlayer(suggestNext()); P.i = P.steps.length - 1; P.left = 12; renderPlayer(); }],
+    ['Check-in', () => { const r = devRec(); showCheckin(Object.assign({}, r, { id: 'devrec' + Date.now(), date: todayISO(), dev: true })); }],
+    ['Done + share', () => { showDone(devRec()); }],
+  ]],
+  ['Library', LIBTABS.map(([k, n]) => [n, () => { ui.libTab = k; goTab('library'); }])],
+  ['Sheets', [
+    ['Phase', () => { goTab('home'); openPhaseSheet(); }], ['Week', () => { goTab('home'); openWeekSheet(); }], ['Sound', () => { goTab('home'); openSettings(); }],
+    ['Exercise P3', () => openExercise('P3')],
+    ['Session detail', () => { goTab('journal'); const s = S.sessions[S.sessions.length - 1]; if (s) openSessionDetail(s.id); else toast('No sessions in this data set'); }],
+  ]],
+];
+function openDevPanel(){
+  const dp = $('#devpanel');
+  const data = [['real','My data'],['new','New user'],['mid','Mid-program'],['today','Trained today']];
+  dp.innerHTML = `<div class="dp" role="dialog" aria-label="Dev controls">
+    <div class="dp-head"><b>DEV CONTROLS</b><button class="roundbtn" id="dp-close" aria-label="Close dev controls" style="width:36px;height:36px">${I.close}</button></div>
+    <div class="dp-group"><span>Data</span><div class="toggles">${data.map(([k, n]) => `<button class="tog" data-dd="${k}" aria-pressed="${DEV.sample === k}">${n}</button>`).join('')}</div>
+      <p class="dp-note">${DEV.sample === 'real' ? 'Showing your real log. Preview screens never save.' : 'Sample data in use. Nothing you do is saved until you switch back to My data.'}</p></div>
+    ${DEV_VIEWS.map(([g, items], gi) => `<div class="dp-group"><span>${g}</span><div class="toggles">${items.map(([n], i) => `<button class="tog" data-dv="${gi}:${i}">${n}</button>`).join('')}</div></div>`).join('')}
+    <div class="dp-group"><span>Player speed</span><div class="toggles">${[1, 10, 60].map(x => `<button class="tog" data-ds="${x}" aria-pressed="${DEV.speed === x}">${x}×</button>`).join('')}</div></div>
+    <button class="btn-text" id="dp-hide" style="align-self:flex-start;padding-left:0">Hide dev controls on this device</button>
+  </div>`;
+  dp.hidden = false;
+  dp.onclick = e => { if (e.target === dp) closeDevPanel(); };
+  $('#dp-close').onclick = closeDevPanel;
+  dp.querySelectorAll('[data-dd]').forEach(b => b.onclick = () => { devReset(); devUseData(b.dataset.dd); goTab(ui.tab); openDevPanel(); });
+  dp.querySelectorAll('[data-dv]').forEach(b => b.onclick = () => { const [g, i] = b.dataset.dv.split(':').map(Number); closeDevPanel(); devReset(); DEV_VIEWS[g][1][i][1](); });
+  dp.querySelectorAll('[data-ds]').forEach(b => b.onclick = () => { DEV.speed = +b.dataset.ds; openDevPanel(); });
+  $('#dp-hide').onclick = () => { try { localStorage.setItem('stillpoint.dev', 'off'); } catch (e) {} closeDevPanel(); const f = document.querySelector('.devfab'); f && f.remove(); toast('Add #dev to the link to bring them back'); };
+}
+function closeDevPanel(){ const dp = $('#devpanel'); dp.hidden = true; dp.innerHTML = ''; }
+function showDevFab(force){
+  if (document.querySelector('.devfab')) return;
+  let off = false; try { off = localStorage.getItem('stillpoint.dev') === 'off'; } catch (e) {}
+  if (off && !force) return;
+  if (force) try { localStorage.removeItem('stillpoint.dev'); } catch (e) {}
+  const b = document.createElement('button'); b.className = 'devfab'; b.textContent = 'DEV'; b.setAttribute('aria-label', 'Open dev controls');
+  b.onclick = openDevPanel; $('#device').appendChild(b);
+}
+if (location.hash === '#dev' || /[?&]dev\b/.test(location.search)) showDevFab(true);
+
+const initialTab = { journal:'journal', progress:'journal', library:'library' }[location.hash.slice(1)] || null;
+renderHome();
+if (initialTab) goTab(initialTab);
+maybeOnboard();
+
+/* Installed app: work offline. Not inside Claude, where the page is sandboxed. */
+if ('serviceWorker' in navigator && !window.claude && /^https?:$/.test(location.protocol)) {
+  addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
