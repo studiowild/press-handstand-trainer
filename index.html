@@ -93,8 +93,9 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { height: 100%; }
+html { background: #f1ede6; }
 body {
-  margin: 0; background: var(--deep); color: var(--ink);
+  margin: 0; background: transparent; color: var(--ink);
   font-family: var(--f-body); font-size: 15px; line-height: 1.45;
   -webkit-font-smoothing: antialiased; overflow: hidden; overscroll-behavior: none;
   touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%;
@@ -106,7 +107,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; text-wrap: balance; }
 p { margin: 0; }
 
 /* ---------- Device ---------- */
-#device { position: fixed; inset: 0; overflow: hidden; overflow: clip; container-type: size; background: var(--deep); }
+#device { position: fixed; inset: 0; overflow: hidden; overflow: clip; container: device / size; background: var(--deep); }
 .desk-note { display: none; }
 @media (hover: hover) and (pointer: fine) and (min-width: 520px) {
   body { background: radial-gradient(ellipse at 50% 30%, #3a3850, #17161f 70%); }
@@ -117,6 +118,12 @@ p { margin: 0; }
   }
   .desk-note { display: block; position: fixed; left: 0; right: 0; bottom: 10px; font-size: 12px; color: var(--ink-3); text-align: center; margin: 0; }
 }
+
+/* phone turned sideways: keep the app upright against the phone, clear of the notch */
+html[data-rot] #device { --notch: max(env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  inset: auto; left: 50%; top: 50%; width: 100vh; height: calc(100vw - var(--notch)); border-radius: 0; box-shadow: none; }
+html[data-rot="ccw"] #device { transform: translate(-50%, -50%) rotate(-90deg) translateY(calc(var(--notch) / 2)); }
+html[data-rot="cw"] #device { transform: translate(-50%, -50%) rotate(90deg) translateY(calc(var(--notch) / 2)); }
 
 /* ---------- Backdrop: scene + per-screen mood ---------- */
 #sea, #veil, #tint { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -154,59 +161,37 @@ p { margin: 0; }
   padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
   display: flex; flex-direction: column;
 }
-.overlay > .inner { width: 100%; max-width: 460px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; min-height: 0; }
-body:has(#overlay:not([hidden])) .app { visibility: hidden; }
+/* screens grow with their content and scroll; the player alone is fitted to the screen */
+.overlay > .inner { width: 100%; max-width: 460px; margin: 0 auto; flex: 1 0 auto; display: flex; flex-direction: column; }
+.overlay > .inner.player-ui { flex: 1 1 0; min-height: 0; }
+.overlay { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+body:has(#overlay:not([hidden])) #app { visibility: hidden; }
 .grow { flex: 1; min-height: 24px; }
 .text-shadow, .view, .overlay { text-shadow: var(--tshadow); }
 
 /* Content lands softly */
 .rise { animation: rise .7s var(--ease) both; animation-delay: calc(var(--d, 0) * 70ms); }
-@keyframes rise { from { opacity: 0; transform: translateY(12px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-::view-transition-old(root) { animation: vt-out .38s var(--ease) both; }
-::view-transition-new(root) { animation: vt-in .55s var(--ease) both; }
-@keyframes vt-out { to { opacity: 0; filter: blur(8px); } }
-@keyframes vt-in { from { opacity: 0; filter: blur(8px); } }
-
-/* Crossing into and out of a workout: dusk on the way in, dawn on the way out */
-html[data-vt="enter"]::view-transition-old(root) { animation: vt-enter-out 1.1s cubic-bezier(.4,0,.2,1) both; }
-html[data-vt="enter"]::view-transition-new(root) { animation: vt-enter-in 1.6s cubic-bezier(.2,.7,.2,1) .45s both; }
-html[data-vt="exit"]::view-transition-old(root) { animation: vt-exit-out 1.2s cubic-bezier(.4,0,.2,1) both; }
-html[data-vt="exit"]::view-transition-new(root) { animation: vt-exit-in 1.7s cubic-bezier(.2,.7,.2,1) .3s both; }
-@keyframes vt-enter-out { to { opacity: 0; filter: blur(16px) brightness(.5); transform: scale(.955); } }
-@keyframes vt-enter-in { from { opacity: 0; filter: blur(18px); transform: scale(1.05); } }
-@keyframes vt-exit-out { to { opacity: 0; filter: blur(14px) brightness(1.7); transform: scale(1.035); } }
-@keyframes vt-exit-in { from { opacity: 0; filter: blur(16px) brightness(1.3); transform: scale(.975); } }
+/* Screen changes: the old screen is cloned into a ghost layer that fades away above the new one,
+   so the backdrop underneath never stops, never dims and never shows an edge. */
+.ghost { position: absolute; inset: 0; z-index: 25; pointer-events: none; }
+.ghost.page-ghost { z-index: 1; inset: auto; }
+.ghost *, .ghost *::before, .ghost *::after { animation: none !important; transition: none !important; }
 /* the backdrop takes its time when the mode changes */
 #device.shifting #sea { transition: filter 2.4s cubic-bezier(.3,.1,.2,1), transform 2.8s cubic-bezier(.3,.1,.2,1); }
 #device.shifting #tint, #device.shifting #veil { transition: opacity 2.4s cubic-bezier(.3,.1,.2,1); }
 /* arrival sequence: orb swells, the ring draws itself, then words, then controls */
-.arriving .dial .orb { animation: orb-in 1.9s cubic-bezier(.2,.7,.2,1) .7s both, fill-breathe 8s ease-in-out 2.6s infinite; }
+.arriving .dial .orb { animation: orb-in 1.9s cubic-bezier(.2,.7,.2,1) .5s both, fill-breathe 8s ease-in-out 2.4s infinite; }
 @keyframes orb-in { from { opacity: 0; transform: scale(.35); } to { opacity: .78; transform: scale(.985); } }
-.arriving .dial .ring { stroke-dasharray: 302; stroke-dashoffset: 302; animation: ring-draw 1.8s cubic-bezier(.65,0,.25,1) .9s forwards; }
+.arriving .dial .ring { stroke-dasharray: 302; stroke-dashoffset: 302; animation: ring-draw 1.8s cubic-bezier(.65,0,.25,1) .7s forwards; }
 @keyframes ring-draw { to { stroke-dashoffset: 0; } }
-.arriving .dial .arc, .arriving .dial .dot { animation: fade .8s ease 2.2s both; }
-.arriving .dial .t { animation: rise 1s var(--ease) 1.4s both; }
-.arriving .rise { animation-duration: 1s; animation-delay: calc(1.6s + var(--d, 0) * 110ms); }
-.arriving .topbar, .arriving .ptrack, .arriving .pmeta { animation: fade 1s ease 1.2s both; }
-.arriving .nextline, .arriving .controls, .arriving .pfoot { animation: rise 1s var(--ease) 2.1s both; }
-.inner.landing .rise { animation-duration: 1s; animation-delay: calc(.9s + var(--d, 0) * 110ms); }
-
-/* sideways slide between main pages */
-html[data-vt="tab-next"]::view-transition-old(page) { animation: page-out-l .32s cubic-bezier(.4,0,.6,1) both; }
-html[data-vt="tab-next"]::view-transition-new(page) { animation: page-in-r .56s cubic-bezier(.2,.8,.2,1) .08s both; }
-html[data-vt="tab-prev"]::view-transition-old(page) { animation: page-out-r .32s cubic-bezier(.4,0,.6,1) both; }
-html[data-vt="tab-prev"]::view-transition-new(page) { animation: page-in-l .56s cubic-bezier(.2,.8,.2,1) .08s both; }
-@keyframes page-out-l { to { transform: translateX(-26%); opacity: 0; } }
-@keyframes page-in-r { from { transform: translateX(26%); opacity: 0; } }
-@keyframes page-out-r { to { transform: translateX(26%); opacity: 0; } }
-@keyframes page-in-l { from { transform: translateX(-26%); opacity: 0; } }
-html[data-vt^="tab-"]::view-transition-group(page) { animation-duration: .58s; }
-/* the backdrop and tab bar hold still while pages slide */
-html[data-vt^="tab-"]::view-transition-old(root) { animation: none; opacity: 0; }
-html[data-vt^="tab-"]::view-transition-new(root) { animation: none; }
-html[data-vt^="tab-"]::view-transition-old(tabbar) { animation: none; opacity: 0; }
-html[data-vt^="tab-"]::view-transition-new(tabbar) { animation: none; }
+.arriving .dial .arc, .arriving .dial .dot { animation: fade .8s ease 2s both; }
+.arriving .dial .t { animation: rise 1s var(--ease) 1.2s both; }
+.arriving .rise { animation-duration: 1s; animation-delay: calc(1.4s + var(--d, 0) * 110ms); }
+.arriving .topbar, .arriving .ptrack, .arriving .pmeta { animation: fade 1s ease 1s both; }
+.arriving .nextline, .arriving .controls, .arriving .pfoot, .arriving .pdots { animation: rise 1s var(--ease) 1.9s both; }
+.inner.landing .rise { animation-duration: 1s; animation-delay: calc(.6s + var(--d, 0) * 100ms); }
 .scroll { touch-action: pan-y; }
 
 /* ---------- Type ---------- */
@@ -354,8 +339,35 @@ html[data-vt^="tab-"]::view-transition-new(tabbar) { animation: none; }
 .ptrack div { height: 2px; border-radius: 2px; background: var(--track); overflow: hidden; position: relative; }
 .ptrack i { position: absolute; inset: 0 auto 0 0; background: var(--ink); }
 /* the dial is pinned at a fixed height; exercise text flows below it, so the timer never moves between exercises */
-.stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; gap: 0; min-height: 0; padding-block: clamp(14px, 6cqh, 60px) 10px; }
-.dial { position: relative; width: min(66cqw, 36cqh, 280px); aspect-ratio: 1; max-width: 100%; }
+.stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; gap: 0; min-height: 0; padding-block: clamp(14px, 6cqh, 60px) 10px;
+  position: relative; touch-action: pan-y; --pp: 0; --tx: 0px; --ty: 0px; --k: 1; container-type: size; container-name: stage; }
+/* the dial takes what the stage can spare after the name and dose */
+.dial { position: relative; width: max(150px, min(74cqw, calc(100cqh - 150px), 280px)); container-type: inline-size; aspect-ratio: 1; max-width: 100%; flex-shrink: 0; z-index: 2; cursor: pointer;
+  transform: translate(calc(var(--tx) * var(--pp)), calc(var(--ty) * var(--pp))) scale(calc(1 + (var(--k) - 1) * var(--pp))); will-change: transform; }
+.dial .t small { opacity: calc(1 - var(--pp) * 2.4); }
+.dial .t .numeral { transform: scale(calc(1 + var(--pp) * .22)); }
+/* view 1: the timer, name and dose. View 2: the exercise in full, clock tucked top right */
+.pv1 { display: flex; flex-direction: column; align-items: center; opacity: calc(1 - var(--pp) * 1.7); transform: translateX(calc(var(--pp) * -32px)); }
+.pv2 { position: absolute; inset: 0; z-index: 1; overflow-y: auto; scrollbar-width: none; text-align: left; padding: 4px 0 18px;
+  opacity: calc((var(--pp) - .3) * 1.45); transform: translateX(calc((1 - var(--pp)) * 32px)); pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(180deg, #000 calc(100% - 28px), transparent); }
+.pv2::-webkit-scrollbar { display: none; }
+.stage.on2 .pv2 { pointer-events: auto; }
+.stage.on2 .pv1 { pointer-events: none; }
+.pv2-head { min-height: 72px; padding-right: 88px; }
+.ex-title { font-family: var(--f-display); font-weight: 300; font-size: clamp(27px, 9.4cqw, 36px); line-height: 1.12; margin-top: 10px; }
+.ex-dose2 { margin-top: 10px; font-size: 15px; color: var(--ink-2); }
+.ex-cue2 { margin-top: 22px; font-family: var(--f-voice); font-style: italic; font-weight: 300; font-size: 18.5px; line-height: 1.5; letter-spacing: .02em; }
+.pv2-sub { display: block; margin-top: 28px; }
+.ex-how { list-style: none; margin: 8px 0 0; padding: 0; counter-reset: how; }
+.ex-how li { counter-increment: how; display: grid; grid-template-columns: 24px 1fr; gap: 6px; padding: 11px 0; border-top: 1px solid var(--hair); font-size: 15.5px; line-height: 1.45; color: var(--ink-2); }
+.ex-how li:first-child { border-top: 0; }
+.ex-how li::before { content: counter(how); font-size: 12px; font-weight: 600; color: var(--ink-3); padding-top: 3px; font-variant-numeric: tabular-nums; }
+.ex-x { margin-top: 8px; font-size: 15.5px; line-height: 1.45; color: var(--ink-2); }
+.pdots { display: flex; justify-content: center; gap: 2px; margin-bottom: 6px; }
+.pdots button { width: 32px; height: 24px; display: grid; place-items: center; }
+.pdots i { width: 6px; height: 6px; border-radius: 3px; background: var(--ink-4); transition: width .45s var(--ease), background .45s var(--ease); }
+.pdots [aria-selected="true"] i { width: 18px; background: var(--ink-2); }
 .dial svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .dial .ring { fill: none; stroke: var(--ring); stroke-width: .5; }
 .dial .arc { fill: none; stroke: var(--arc); stroke-width: .7; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; }
@@ -364,9 +376,9 @@ html[data-vt^="tab-"]::view-transition-new(tabbar) { animation: none; }
 @keyframes fill-breathe { 0%, 100% { opacity: .78; transform: scale(.985); } 50% { opacity: 1; transform: scale(1); } }
 @keyframes breathe { 0%, 100% { transform: scale(.94); opacity: .8; } 50% { transform: scale(1.04); opacity: 1; } }
 .dial .t { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; }
-.dial .t .numeral { font-size: clamp(52px, min(17cqw, 9cqh), 76px); }
+.dial .t .numeral { font-size: clamp(34px, 27cqi, 76px); }
 .dial .t small { margin-top: 8px; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 600; color: var(--ink-3); }
-.ex-name { font-family: var(--f-display); font-weight: 300; font-size: clamp(26px, 8.2cqw, 34px); line-height: 1.15; max-width: 15ch; margin-top: 30px; }
+.ex-name { font-family: var(--f-display); font-weight: 300; font-size: clamp(26px, 9.2cqw, 34px); line-height: 1.15; max-width: 15ch; margin-top: 30px; }
 .ex-dose { margin-top: 10px; font-size: 15px; color: var(--ink-2); display: inline-flex; gap: 8px; align-items: baseline; flex-wrap: wrap; justify-content: center; }
 .ex-dose .label { color: var(--ink-3); }
 .ex-cue { margin-top: 18px; font-size: 17px; line-height: 1.45; max-width: 30ch; }
@@ -667,7 +679,7 @@ select.bare option { color: #222; }
 .dp-note { font-size: 12px; color: var(--ink-3); }
 
 /* ---------- Shorter and narrower phones ---------- */
-@container (max-height: 760px) {
+@container device (max-height: 760px) {
   .hero .numeral, .done-hero .numeral, .j-hero .numeral { font-size: clamp(72px, 24cqw, 100px); }
   .hero .lede, .done-hero .lede { margin-top: 16px; font-size: 20px; }
   .done-hero .rule { margin-top: 18px; }
@@ -682,7 +694,14 @@ select.bare option { color: #222; }
   .scale { margin-top: 18px; }
   .scale .numeral { font-size: 40px; }
 }
-@container (max-height: 620px) {
+@container device (max-height: 620px) {
+  .stage { padding-block: 8px 4px; }
+  .ex-name { font-size: 23px; max-width: 20ch; margin-top: 14px; }
+  .ex-dose { margin-top: 6px; font-size: 14px; }
+  .pfoot { margin-top: 6px; }
+  .nextline { margin-bottom: 10px; }
+  .controls .circle.solid { width: 62px; height: 62px; }
+  .controls .circle { width: 50px; height: 50px; }
   .week { display: none; }
   .hero .voice, .done-hero .voice, .ex-cue { display: none; }
   .hero .numeral, .done-hero .numeral { font-size: 68px; }
@@ -693,7 +712,7 @@ select.bare option { color: #222; }
   .celebrate h2 { font-size: 21px; margin-top: 16px; }
   .celebrate .week { margin-top: 20px; }
 }
-@container (max-width: 340px) {
+@container device (max-width: 340px) {
   .scroll, .overlay, .sheet { --gutter: 20px; }
   .stats > div { padding-right: 12px; } .stats > div + div { padding-left: 12px; }
   .stats b { font-size: 15.5px; }
@@ -703,7 +722,6 @@ select.bare option { color: #222; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
 }
 </style>
 </head>
@@ -713,7 +731,7 @@ select.bare option { color: #222; }
 <div id="tint" aria-hidden="true"></div>
 <div id="veil" aria-hidden="true"></div>
 
-<div class="app">
+<div class="app" id="app">
   <main class="scroll" id="scroll">
     <section class="view" id="v-home" aria-label="Today"></section>
     <section class="view" id="v-journal" aria-label="Progress" hidden></section>
@@ -761,6 +779,32 @@ const EX = {
   P8:{n:'Jumping straddle press',d:'5 singles',c:'Minimal hop; slow the top half. A pattern drill only.'},
   P9:{n:'Full straddle press attempts',d:'3–5 attempts, fresh',c:'Dead stop, no momentum. Stop when quality drops.'},
 };
+/* Fuller coaching for the player's detail view: how to do each exercise, and the mistake to watch for. */
+const EX_HOW = {
+  C1:[['Sit tall, legs straight and together, hands flat on the floor beside your knees.','Press the hands down, keep the knees locked and lift both heels a few centimetres.','Pause for a breath, then lower with control. Hold the last rep for 10 s.'],'Leaning back to get the heels up. Stay tall and let the hip flexors do the work.'],
+  C2:[['Sit in a wide straddle, toes pointed, hands on the floor between or in front of the legs.','Lift both heels off the floor without rocking back.','Pause at the top, then lower slowly.'],'Bending the knees to clear the floor. Smaller lifts with straight legs count for more.'],
+  C3:[['Hands on the floor or parallettes beside the hips.','Push the floor away, shoulders down from the ears, and lift the hips.','Hold the legs up in a straddle or L and keep breathing.'],'Shrugging. Keep the shoulders pressed down so the lift comes from the arms and core.'],
+  C4:[['Sit in a pike or straddle with your hands off the floor.','Fold forward, then actively pull the chest further down with the hip flexors.','Pulse in small, controlled reps. No bouncing.'],'Sinking into a passive stretch. Each pulse should feel like a squeeze, not a sag.'],
+  C5:[['Hang from a bar, or lie flat with your arms overhead.','Lift the legs slowly toward the hands, curling the pelvis at the top.','Lower under control, without swinging.'],'Using momentum. If you need a swing, slow down or soften the knees.'],
+  C6:[['Lie on your back, arms overhead, legs straight.','Press the lower back into the floor and lift the shoulders and legs.','Hold the shape with the ribs drawn in, and breathe.'],'The lower back lifting off the floor. Raise the legs higher until it stays down.'],
+  S1:[['Hands shoulder-width apart, hips high in a pike. Put your feet on a box for the harder version.','Lower the head forward of the hands, elbows tracking back.','Press back up until the arms are straight and the shoulders open.'],'Elbows flaring wide. Keep them about 45° from the body to protect the shoulders.'],
+  S2:[['Start in a push-up position, fingers turned slightly out.','Lean the shoulders forward past the wrists, arms locked straight.','Protract hard, rounding the upper back a little, and hold.'],'Bending the elbows as you lean. Lean less and keep the arms straight.'],
+  S3:[['Feet on a box, hands on the floor, hips folded over the shoulders.','Walk the hands in until the hips stack above the shoulders.','Push tall through the shoulders and hold.'],'Sinking into the shoulders. Keep pushing the floor away for the whole hold.'],
+  S4:[['Start in a chest-to-wall handstand.','Walk the hands out slowly as the shoulders lean forward.','Keep the hips over the hands as long as you can, then walk back in.'],'Letting the hips drop early. Walk out a shorter distance and stay stacked.'],
+  S5:[['Start in a plank with your feet against the wall.','Walk the feet up and the hands in, all the way to a vertical handstand.','Pause at the top, then walk down slowly.'],'Arching the lower back at the top. Squeeze the glutes and draw the ribs in.'],
+  S6:[['Kick up to a wall handstand with a pad under your head.','Lower slowly, over 3–5 s, until your head touches the pad.','Come down from the wall and reset. Lowering only, for now.'],'Dropping the last few centimetres. Control the whole lower, or use a thicker pad.'],
+  S7:[['Stand tall with a light dumbbell or plate, elbows locked.','Raise the arms in front of you, all the way overhead.','Lower slowly. This is the press’s shoulder movement.'],'Arching back to finish the lift. Go lighter and keep the ribs down.'],
+  P1:[['Feet on a 30–50 cm box in a straddle, hands on the floor in front.','Lean the shoulders over the fingertips until the feet feel light.','Let the hips float up over the hands, then bring the legs together.'],'Jumping off the box. Lean first; the lift should feel slow and floaty.'],
+  P2:[['Kick or walk up to a handstand, back or chest to the wall.','Open the legs into a straddle and lean the shoulders forward.','Lower over 3–5 s until the feet land softly near the hands.'],'Bending the elbows on the way down. Lock them and lean more instead.'],
+  P3:[['Kick up to a freestanding handstand.','Open to a straddle, lean the shoulders forward and fold at the hips.','Lower as slowly as you can, to soft feet.'],'Losing the lean and dropping to the feet. Dig the fingers in to stay over the hands.'],
+  P4:[['From a handstand, begin a straddle lower.','Stop as soon as the hips start to drop.','Press back up to vertical from there.'],'Going too far down. The rep ends the moment the hips start to fall.'],
+  P5:[['Set up a stable tripod headstand.','Lower the legs in a straddle or pike until the toes touch the floor.','Lift them back to vertical, hips staying over the shoulders.'],'The hips drifting back as the legs lower. Keep them stacked over your base.'],
+  P6:[['Hands on the floor, feet in a wide straddle, up on your toes.','Lean the shoulders forward until the feet feel light.','Hover the toes for 1–2 s, then set them down softly.'],'Hopping. If the feet won’t lift from the lean, lean further rather than jump.'],
+  P7:[['From a handstand, bend the knees into a tuck, hips stacked.','Hold the tuck for a moment, shoulders pushing tall.','Extend the legs back to a straight handstand.'],'The hips falling behind the hands in the tuck. Lean the shoulders slightly forward.'],
+  P8:[['Stand in a straddle with your hands on the floor.','Take a small hop, then slow the top half of the press.','Bring the legs together in the handstand.'],'Turning it into a kick-up. Hop as little as you can; this drills the pattern.'],
+  P9:[['Straddle stand, hands on the floor. Start from a dead stop, no bounce.','Lean the shoulders over the fingertips and let the hips rise.','Bring the legs together at the top. Stop when quality drops.'],'Bending the arms to grind it out. A straight-arm miss is better practice than a bent-arm make.'],
+};
+Object.entries(EX_HOW).forEach(([k, [how, x]]) => Object.assign(EX[k], { how, x }));
 const CATS = [
   {k:'C',n:'Compression',p:'Active hip-flexor and lower-ab strength to pull the legs to the chest, plus the pike and pancake flexibility that makes it cheaper.'},
   {k:'S',n:'Straight-arm shoulder strength',p:'Leaning the shoulders past the hands to counterbalance the hips as they rise, without bending the elbows.'},
@@ -1017,7 +1061,7 @@ const dev$ = document.getElementById('device');
 dev$.addEventListener('scroll', () => { if (dev$.scrollTop || dev$.scrollLeft) dev$.scrollTop = dev$.scrollLeft = 0; });   // the frame never scrolls; its screens do
 const cv = document.getElementById('sea'), cx = cv.getContext('2d');
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-let sceneKey = 'A', sceneFrom = null, sceneT = 1, horizon = .56, horizonTarget = .56, intensity = 0, dust = 0, dustTarget = 0, orbA = 1, orbTarget = 1;
+let needDraw = true, sceneKey = 'A', sceneFrom = null, sceneT = 1, horizon = .56, horizonTarget = .56, intensity = 0, dust = 0, dustTarget = 0, orbA = 1, orbTarget = 1;
 const hex = h => [1,3,5].map(i => parseInt(h.slice(i, i+2), 16));
 const lerpHex = (a, b, t) => { const A = hex(a), B = hex(b); return '#' + A.map((v,i) => Math.round(v + (B[i]-v)*t).toString(16).padStart(2,'0')).join(''); };
 const hexA = (h, a) => { const [r,g,b] = hex(h); return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')'; };
@@ -1034,15 +1078,15 @@ function setMood(mood, key){
   const dark = !!DARK_MOODS[mood];
   if (dev$.dataset.mode !== (dark ? 'dark' : 'light')) { dev$.classList.add('shifting'); clearTimeout(shiftTimer); shiftTimer = setTimeout(() => dev$.classList.remove('shifting'), 2900); }
   dev$.dataset.mood = mood; dev$.dataset.mode = dark ? 'dark' : 'light';
-  const tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.content = dark ? '#0c0b12' : '#f1ede6';
   if (key) setScene(key + (dark ? '.d' : ''));
   horizonTarget = MOOD_HORIZON[mood] ?? .56;
   dustTarget = MOOD_DUST[mood] || 0;
   orbTarget = mood === 'player' ? .28 : 1;   // the sphere steps back while you train
   intensity = mood === 'player' ? 1 : mood === 'done' ? .5 : 0;
+  followStatus(3200);
 }
 let sceneCache = new Map(), sceneGeo = null;
-function resize(){ const dpr = Math.min(1.5, devicePixelRatio || 1); cv.width = cv.clientWidth * dpr; cv.height = cv.clientHeight * dpr; cx.setTransform(dpr,0,0,dpr,0,0); sceneCache = new Map(); sceneGeo = null; }
+function resize(){ needDraw = true; const dpr = Math.min(1.5, devicePixelRatio || 1); cv.width = cv.clientWidth * dpr; cv.height = cv.clientHeight * dpr; cx.setTransform(dpr,0,0,dpr,0,0); sceneCache = new Map(); sceneGeo = null; }
 function fitFrame(){ const s = Math.min(1, (innerHeight - 56) / 852, (innerWidth - 32) / 393); document.documentElement.style.setProperty('--fit', s.toFixed(4)); }
 addEventListener('resize', () => { fitFrame(); resize(); }); fitFrame(); resize();
 
@@ -1143,14 +1187,25 @@ function themeLayers(k){
 /* ---- Frame: drifting haze, a slow sheen on the sphere, rippled reflections, grain ---- */
 const motes = Array.from({length: 18}, (_, i) => ({ x: (i * 0.618) % 1, y: (i * 0.377 + .1) % 1, r: .5 + (i % 4) * .28, s: .002 + (i % 5) * .0012, p: i * 1.3 }));
 let lastFrame = 0;
+/* Under a heavy blur the drift and ripples can't be seen, so a blurred screen stops redrawing once it settles.
+   The GPU then blurs one still image instead of 30 a second, which keeps transitions smooth on a phone. */
+const MOOD_BLUR = { home: 0, practice: 22, player: 30, checkin: 40, done: 12, journal: 26, library: 26 };
 function draw(now){
   requestAnimationFrame(draw);
-  if (now - lastFrame < 33) return;
+  const settling = sceneT < 1 || Math.abs(horizonTarget - horizon) > .0004 || Math.abs(dustTarget - dust) > .004 || Math.abs(orbTarget - orbA) > .004;
+  const still = (MOOD_BLUR[dev$.dataset.mood] || 0) >= 12;
+  if (!needDraw && now - lastFrame < (still ? (settling ? 50 : Infinity) : 33)) return;
+  needDraw = false;
   const dt = Math.min(100, now - lastFrame); lastFrame = now;
   if (sceneT < 1) sceneT = Math.min(1, sceneT + dt / sceneDur);
   horizon += (horizonTarget - horizon) * Math.min(1, dt / 1100);
   dust += (dustTarget - dust) * Math.min(1, dt / 1200);
   orbA += (orbTarget - orbA) * Math.min(1, dt / 1100);
+  if (still) {   // under blur the last sliver of an ease can't be seen; land it so the backdrop can rest
+    if (Math.abs(horizonTarget - horizon) < .003) horizon = horizonTarget;
+    if (Math.abs(dustTarget - dust) < .03) dust = dustTarget;
+    if (Math.abs(orbTarget - orbA) < .02) orbA = orbTarget;
+  }
   const W = cv.clientWidth, H = cv.clientHeight; if (!W || !H) return;
   const dpr = cv.width / W, t = reduceMotion ? 0 : now / 1000, G = geometry(W, H), dy = (horizon - .56) * H, wl = G.WL0 + dy, S = G.sphere;
   const e = ease(sceneT), fading = sceneFrom && sceneT < 1;
@@ -1218,16 +1273,77 @@ function draw(now){
   cx.globalAlpha = lightNow ? .05 : .06; cx.globalCompositeOperation = lightNow ? 'multiply' : 'overlay'; cx.fillStyle = G.grainPat;
   cx.save(); cx.setTransform(1, 0, 0, 1, 0, 0); cx.fillRect(0, 0, cv.width, cv.height); cx.restore();
   cx.globalCompositeOperation = 'source-over'; cx.globalAlpha = 1;
+  if (now < statusUntil && now - statusSampled > 110) sampleTop(W, H, dpr, now);
 }
 requestAnimationFrame(draw);
 
-/* Screen changes crossfade (and blur) through the View Transitions API where available. */
+/* The status bar takes the colour at the very top of the screen, so the app runs edge to edge in both modes.
+   It follows the backdrop through each mood change: canvas colour, then the tint and veil laid over it. */
+let statusUntil = 0, statusSampled = 0, topRGB = [241, 237, 230], statusTimer = 0;
+const MOOD_ZOOM = { home: 1, practice: 1.12, player: 1.18, checkin: 1.2, done: 1.08, journal: 1.14, library: 1.14 };
+function sampleTop(W, H, dpr, now){
+  statusSampled = now;
+  try {
+    const z = MOOD_ZOOM[dev$.dataset.mood] || 1, y = Math.round(H / 2 * (1 - 1 / z) * dpr) + 2;
+    const d = cx.getImageData(Math.round(W / 2 * dpr), y, 1, Math.max(1, Math.round(24 * dpr))).data;
+    const c = [0, 0, 0], n = d.length / 4;
+    for (let i = 0; i < d.length; i += 4) { c[0] += d[i]; c[1] += d[i + 1]; c[2] += d[i + 2]; }
+    topRGB = c.map(v => v / n);
+  } catch (e) {}
+}
+const rgbaOf = str => { const m = str.match(/[\d.]+/g) || []; return [+m[0] || 0, +m[1] || 0, +m[2] || 0, m[3] === undefined ? 1 : +m[3]]; };
+const mixRGB = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+function paintStatus(){
+  const ts = getComputedStyle($('#tint')), tint = rgbaOf(ts.backgroundColor), veil = rgbaOf(getComputedStyle(dev$).getPropertyValue('--veil-a'));
+  let c = mixRGB(topRGB, tint, +ts.opacity * tint[3]);
+  c = mixRGB(c, veil, +getComputedStyle($('#veil')).opacity * veil[3]);
+  const hexC = '#' + c.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0')).join('');
+  const tc = document.querySelector('meta[name="theme-color"]'); if (tc && tc.content !== hexC) tc.content = hexC;
+  document.documentElement.style.backgroundColor = hexC;
+}
+function followStatus(ms){
+  statusUntil = performance.now() + ms; needDraw = true;
+  clearInterval(statusTimer);
+  statusTimer = setInterval(() => { paintStatus(); if (performance.now() > statusUntil + 150) clearInterval(statusTimer); }, 120);
+}
+
+/* Screen changes: the screen you're leaving is cloned into a ghost layer that fades away above the new one.
+   The backdrop is never part of it, so it keeps moving underneath and nothing dims, flashes or blocks taps. */
+let ghost = null;
+const EASE_OUT = 'cubic-bezier(.4,0,.2,1)', EASE_IN = 'cubic-bezier(.2,.7,.2,1)';
+const SWAPS = {
+  fade:  { out: [{opacity: 1}, {opacity: 0}], outMs: 240, in: [{opacity: 0, transform: 'translateY(6px)'}, {opacity: 1, transform: 'none'}], inMs: 520, delay: 170 },
+  // into a workout the old screen sinks back, out of one it lifts away; the backdrop does the dusk and dawn
+  enter: { out: [{opacity: 1, transform: 'none'}, {opacity: 0, transform: 'scale(.965)'}], outMs: 760, in: [{opacity: 0}, {opacity: 1}], inMs: 900, delay: 260 },
+  exit:  { out: [{opacity: 1, transform: 'none'}, {opacity: 0, transform: 'scale(1.03)'}], outMs: 820, in: [{opacity: 0, transform: 'scale(.985)'}, {opacity: 1, transform: 'none'}], inMs: 1000, delay: 240 },
+};
+function dropGhost(){
+  if (ghost) { ghost.remove(); ghost = null; }
+  [$('#app'), $('#overlay'), $('#scroll'), ...document.querySelectorAll('#overlay .inner > *')].forEach(el => el.getAnimations().forEach(a => { if (!(a instanceof CSSAnimation)) a.cancel(); }));
+}
+function makeGhost(src, cls){
+  const g = src.cloneNode(true), from = src.querySelectorAll('*'), to = g.querySelectorAll('*'), scrolls = [];
+  from.forEach((el, i) => { if (el.scrollTop) scrolls.push([to[i], el.scrollTop]); });
+  [g, ...to].forEach(el => { el.removeAttribute('id'); el.classList.remove('arriving', 'landing'); });
+  g.inert = true; g.setAttribute('aria-hidden', 'true'); g.hidden = false;
+  const wrap = document.createElement('div'); wrap.className = 'ghost' + (cls ? ' ' + cls : ''); wrap.appendChild(g);
+  wrap.place = parent => { parent.appendChild(wrap); g.scrollTop = src.scrollTop; scrolls.forEach(([el, y]) => el.scrollTop = y); };
+  return wrap;
+}
 function swap(fn, type){
-  if (!document.startViewTransition || reduceMotion) { fn(); return; }
-  const root = document.documentElement;
-  if (type) root.dataset.vt = type;
-  try { document.startViewTransition(fn).finished.finally(() => { if (root.dataset.vt === type) delete root.dataset.vt; }); }
-  catch (e) { delete root.dataset.vt; fn(); }
+  dropGhost();
+  const ov = $('#overlay');
+  if (reduceMotion) { fn(); return; }
+  const src = ov.hidden ? $('#app') : ov, g = makeGhost(src); g.place(dev$); ghost = g;
+  try { fn(); } catch (e) { dropGhost(); throw e; }
+  const T = SWAPS[type] || SWAPS.fade, layer = $('#overlay').hidden ? $('#app') : $('#overlay');
+  // moving between steps of one flow, the top bar stays put rather than fading out and back
+  const oldBar = g.querySelector('.inner > .topbar'), newBar = layer.querySelector('.inner > .topbar');
+  const keepBar = !type && oldBar && newBar && layer.id === 'overlay' && src === layer;
+  if (keepBar) oldBar.style.visibility = 'hidden';
+  const targets = keepBar ? [...layer.querySelectorAll('.inner > *')].filter(el => el !== newBar) : [layer];
+  g.animate(T.out, { duration: T.outMs, easing: EASE_OUT, fill: 'forwards' }).onfinish = () => { if (ghost === g) { g.remove(); ghost = null; } };
+  targets.forEach(el => el.animate(T.in, { duration: T.inMs, delay: T.delay, easing: EASE_IN, fill: 'backwards' }));
 }
 
 /* ================= Icons ================= */
@@ -1897,7 +2013,7 @@ function startPlayer(key){
   audio();
   try { navigator.wakeLock && navigator.wakeLock.request('screen').then(l => wake = l).catch(() => {}); } catch (e) {}
   setMood('player', key);
-  renderPlayer(true);
+  renderPlayer();
   setTimeout(() => { if (P && P.key === key) say(['Session ' + key + '.', 'Take a moment to set up.', steps[1].block + ' first, starting with ' + steps[1].name + '.']); }, 1400);
   P.timer = setInterval(playerTick, 200);
 }
@@ -1923,52 +2039,149 @@ function advance(dir){
   chime(); buzz(25);
   const s = P.steps[n], prevBlock = P.steps[n - dir] && P.steps[n - dir].block;
   say([s.block !== prevBlock ? s.block + '.' : 'Next.', s.name + '.', s.dose + '.']);
-  renderPlayer();
+  setStep(true);
 }
 function playerBlocks(){
   const out = [];
   P.steps.forEach((s, i) => { if (s.ready) return; const l = out[out.length-1]; if (l && l.name === s.block) { l.dur += s.dur; l.end = i; } else out.push({name:s.block, dur:s.dur, start:i, end:i}); });
   return out;
 }
-function renderPlayer(first){
-  const o = $('#overlay'), s = P.steps[P.i], nx = P.steps[P.i + 1], blocks = playerBlocks();
-  const bi = blocks.findIndex(b => P.i >= b.start && P.i <= b.end), C = 2 * Math.PI * 48;
-  o.innerHTML = `<div class="inner${P.running ? '' : ' paused'}${first ? ' arriving' : ''}">
+/* The player is built once; after that only the parts that change are touched, so nothing re-appears.
+   Two views share the stage: the timer, and a swipe away, the exercise in full with the clock tucked top right. */
+function renderPlayer(){
+  const o = $('#overlay'), blocks = playerBlocks(), C = 2 * Math.PI * 48;
+  P.page = 0; P.pp = 0;
+  o.innerHTML = `<div class="inner player-ui arriving${P.running ? '' : ' paused'}">
     <div class="topbar">
       <button class="icon" id="p-end" aria-label="End session">${I.close}</button>
-      <div class="mid"><span class="label">${esc(s.block)}${bi >= 0 ? ' · ' + (bi + 1) + ' of ' + blocks.length : ''}</span><small>Session ${P.key}${isDeload() ? ' · <span class="deload-tag">deload, half the sets</span>' : ''}</small></div>
-      <button class="icon" id="p-voice" aria-label="Spoken cues ${S.profile.voice ? 'on' : 'off'}">${S.profile.voice ? I.sound : I.mute}</button>
+      <div class="mid"><span class="label" id="p-block"></span><small>Session ${P.key}${isDeload() ? ' · <span class="deload-tag">deload, half the sets</span>' : ''}</small></div>
+      <button class="icon" id="p-voice"></button>
     </div>
     <div class="ptrack" id="p-prog">${blocks.map(b => `<div style="flex:${b.dur}"><i></i></div>`).join('')}</div>
     <p class="pmeta" id="p-rem"></p>
-    <div class="stage" aria-live="polite">
-      <div class="dial" ${s.code ? `data-ex="${s.code}" role="button" tabindex="0" aria-label="About ${esc(s.name)}" style="cursor:pointer"` : ''}>
+    <div class="stage" id="p-stage">
+      <div class="dial" id="p-dial" role="button" tabindex="0" aria-label="Show exercise details">
         <div class="orb"></div>
         <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="ring" cx="50" cy="50" r="48"/><circle class="arc" id="p-arc" cx="50" cy="50" r="48" transform="rotate(-90 50 50)" stroke-dasharray="${C}" stroke-dashoffset="${C}"/><circle class="dot" id="p-dot" cx="50" cy="2" r="1.6"/></svg>
-        <div class="t"><span class="numeral" id="p-time">${fmtClock(P.left)}</span><small>${P.running ? 'remaining' : 'paused'}</small></div>
+        <div class="t"><span class="numeral" id="p-time">${fmtClock(P.left)}</span><small id="p-state">${P.running ? 'remaining' : 'paused'}</small></div>
       </div>
-      <h2 class="ex-name rise" style="--d:1">${esc(s.name)}</h2>
-      <p class="ex-dose rise" style="--d:2">${s.code ? `<span class="label">${s.code}</span>` : ''}<span>${esc(s.dose)}</span></p>
-      <p class="ex-cue voice rise" style="--d:3">${esc(s.cue)}</p>
+      <div class="pv1" id="p-v1"><h2 class="ex-name rise" style="--d:1" id="p-name" aria-live="polite"></h2><p class="ex-dose rise" style="--d:2" id="p-dose"></p></div>
+      <div class="pv2" id="p-v2" aria-hidden="true"></div>
     </div>
-    <p class="nextline">${nx ? 'Next · <b>' + esc(nx.name) + '</b>' : 'Next · <b>check in</b>'}</p>
+    <div class="pdots" role="tablist" aria-label="Views">
+      <button role="tab" data-pg="0" aria-selected="true" aria-label="Timer"><i></i></button>
+      <button role="tab" data-pg="1" aria-selected="false" aria-label="Exercise details"><i></i></button>
+    </div>
+    <p class="nextline" id="p-nextline"></p>
     <div class="controls">
       <button class="circle" id="p-prev" aria-label="Previous exercise">${I.prev}</button>
-      <button class="circle solid" id="p-play" aria-label="${P.running ? 'Pause' : 'Resume'}">${P.running ? I.pause : I.play}</button>
+      <button class="circle solid" id="p-play"></button>
       <button class="circle" id="p-next" aria-label="Next exercise">${I.next}</button>
     </div>
     <div class="pfoot"><button class="addtime" id="p-add" aria-label="Add 30 seconds to this exercise">${I.plus}30 s</button></div>
   </div>`;
   o.hidden = false;
-  $('#p-play').onclick = () => { P.running = !P.running; P.last = performance.now(); buzz(10); renderPlayer(); };
+  $('#p-play').onclick = () => { buzz(10); setPaused(P.running); };
   $('#p-next').onclick = () => advance(1);
   $('#p-prev').onclick = () => advance(-1);
   $('#p-add').onclick = () => { P.left += 30; P.steps[P.i].dur += 30; renderProgressOnly(); updatePlayer(); toast('+30 s'); };
-  $('#p-voice').onclick = () => { S.profile.voice = !S.profile.voice; saveProfile(); if (!S.profile.voice) try { speechSynthesis.cancel(); } catch (e) {} renderPlayer(); };
+  $('#p-voice').onclick = () => { S.profile.voice = !S.profile.voice; saveProfile(); if (!S.profile.voice) try { speechSynthesis.cancel(); } catch (e) {} paintControls(); };
   $('#p-end').onclick = confirmEnd;
-  const d = o.querySelector('.dial[data-ex]');
-  if (d) { const op = () => { if (P.running) { P.running = false; renderPlayer(); } openExercise(d.dataset.ex); }; d.onclick = op; d.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); op(); } }; }
+  const dial = $('#p-dial'), flip = () => { if (performance.now() - (P.swiped || 0) > 350) goPage(P.page ? 0 : 1); };
+  dial.onclick = flip; dial.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } };
+  o.querySelectorAll('[data-pg]').forEach(b => b.onclick = () => goPage(+b.dataset.pg));
+  bindPager($('#p-stage'));
+  paintControls(); setStep(false); measureDial();
+}
+function paintControls(){
+  const play = $('#p-play'), v = $('#p-voice'), st = $('#p-state'), inner = $('#overlay .player-ui');
+  if (!P || !play) return;
+  const set = (el, k, html) => { if (el._k !== k) { el._k = k; el.innerHTML = html; } };
+  set(play, P.running, P.running ? I.pause : I.play); play.setAttribute('aria-label', P.running ? 'Pause' : 'Resume');
+  set(v, S.profile.voice, S.profile.voice ? I.sound : I.mute); v.setAttribute('aria-label', 'Spoken cues ' + (S.profile.voice ? 'on' : 'off'));
+  set(st, P.running, P.running ? 'remaining' : 'paused');
+  inner.classList.toggle('paused', !P.running);
+}
+function setPaused(paused){ if (!P) return; P.running = !paused; P.last = performance.now(); paintControls(); }
+/* Fill in the current step. Only text that actually changed fades in, so the screen stays still. */
+function setStep(animate){
+  const s = P.steps[P.i], nx = P.steps[P.i + 1], blocks = playerBlocks();
+  const bi = blocks.findIndex(b => P.i >= b.start && P.i <= b.end);
+  const put = (el, html) => {
+    if (!el || el._html === html) return;
+    el._html = html; el.innerHTML = html;
+    if (animate && !reduceMotion) el.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 520, easing: EASE_IN });
+  };
+  put($('#p-block'), esc(s.block) + (bi >= 0 ? ' · ' + (bi + 1) + ' of ' + blocks.length : ''));
+  put($('#p-name'), esc(s.name));
+  put($('#p-dose'), (s.code ? `<span class="label">${s.code}</span>` : '') + `<span>${esc(s.dose)}</span>`);
+  const v2 = $('#p-v2'); if (v2._html !== detailHTML(s)) { put(v2, detailHTML(s)); v2.scrollTop = 0; }
+  put($('#p-nextline'), nx ? 'Next · <b>' + esc(nx.name) + '</b>' : 'Next · <b>check in</b>');
   updatePlayer();
+}
+function detailHTML(s){
+  const e = s.code && EX[s.code], cat = s.code && CATS.find(c => c.k === s.code[0]);
+  return `<div class="pv2-head"><span class="label dim">${s.code ? s.code + ' · ' + cat.n : esc(s.block)}</span>
+      <h2 class="ex-title">${esc(s.name)}</h2><p class="ex-dose2">${esc(s.dose)}</p></div>
+    <p class="ex-cue2">${esc(s.cue)}</p>
+    ${e && e.how ? `<span class="label dim pv2-sub">How to</span><ol class="ex-how">${e.how.map(h => `<li>${esc(h)}</li>`).join('')}</ol>` : ''}
+    ${e && e.x ? `<span class="label dim pv2-sub">Watch for</span><p class="ex-x">${esc(e.x)}</p>` : ''}`;
+}
+/* Carousel: --pp runs 0 (timer) to 1 (details). The dial shrinks and glides to the corner as you swipe. */
+function measureDial(){
+  const st = $('#p-stage'), d = $('#p-dial'); if (!st || !d) return;
+  const m = 72, ds = d.offsetWidth || 1, cxv = d.offsetLeft + ds / 2, cyv = d.offsetTop + ds / 2;
+  st.style.setProperty('--tx', (st.clientWidth - m / 2 - cxv).toFixed(1) + 'px');
+  st.style.setProperty('--ty', (m / 2 - cyv).toFixed(1) + 'px');
+  st.style.setProperty('--k', (m / ds).toFixed(4));
+}
+addEventListener('resize', () => { if (P) measureDial(); });
+function setPP(v){ if (!P) return; P.pp = v; const st = $('#p-stage'); if (st) st.style.setProperty('--pp', v.toFixed(4)); }
+function goPage(n){
+  if (!P) return;
+  cancelAnimationFrame(P.ppAnim);
+  P.page = n;
+  const st = $('#p-stage'); if (!st) return;
+  st.classList.toggle('on2', n === 1);
+  $('#p-v2').setAttribute('aria-hidden', n !== 1);
+  $('#p-dial').setAttribute('aria-label', n ? 'Back to the timer' : 'Show exercise details');
+  document.querySelectorAll('.pdots [data-pg]').forEach(b => b.setAttribute('aria-selected', +b.dataset.pg === n));
+  const from = P.pp, t0 = performance.now(), dur = reduceMotion ? 1 : 260 + 380 * Math.min(1, Math.abs(n - from));
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    setPP(from + (n - from) * e);
+    if (k < 1 && P) P.ppAnim = requestAnimationFrame(step);
+  };
+  P.ppAnim = requestAnimationFrame(step);
+}
+function bindPager(st){
+  let x0 = null, y0 = 0, mode = null, base = 0, t0 = 0, lastDx = 0, id = 0;
+  st.addEventListener('pointerdown', e => {
+    if (e.button || !P) return;
+    x0 = e.clientX; y0 = e.clientY; mode = null; base = P.pp; t0 = performance.now(); lastDx = 0; id = e.pointerId;
+  });
+  st.addEventListener('pointermove', e => {
+    if (x0 === null || e.pointerId !== id || !P) return;
+    const [dx, dy] = toLocal(e.clientX - x0, e.clientY - y0);
+    if (!mode) {
+      if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.2) { mode = 'h'; cancelAnimationFrame(P.ppAnim); try { st.setPointerCapture(id); } catch (err) {} }
+      else if (Math.abs(dy) > 10) { mode = 'v'; return; }
+      else return;
+    }
+    if (mode !== 'h') return;
+    lastDx = dx;
+    let v = base - dx / (st.clientWidth * .8);
+    if (v < 0) v *= .25; else if (v > 1) v = 1 + (v - 1) * .25;   // resist past either end
+    setPP(Math.max(-.06, Math.min(1.06, v)));
+  });
+  const end = () => {
+    if (x0 === null) return; x0 = null;
+    if (mode !== 'h' || !P) return;
+    P.swiped = performance.now();
+    const flick = performance.now() - t0 < 300 && Math.abs(lastDx) > 30;
+    goPage(flick ? (lastDx < 0 ? 1 : 0) : P.pp > .5 ? 1 : 0);
+  };
+  st.addEventListener('pointerup', end); st.addEventListener('pointercancel', end);
 }
 function renderProgressOnly(){ const blocks = playerBlocks(); document.querySelectorAll('#p-prog > div').forEach((el, i) => el.style.flex = blocks[i].dur); }
 function updatePlayer(){
@@ -1987,15 +2200,15 @@ function updatePlayer(){
   const rm = $('#p-rem'); if (rm) rm.textContent = fmtClock(P.elapsed) + ' in · ' + fmtClock(totalLeft) + ' to go';
 }
 function confirmEnd(){
-  const wasRunning = P.running; P.running = false; renderPlayer();
+  const wasRunning = P.running; setPaused(true);
   openSheet(`<div class="confirm"><h2 class="title">End this session?</h2>
     <p class="sub">You’ve done ${P.doneIdx.size} of ${P.steps.length - 1} exercises. Log what you did, or let it go.</p>
     <div class="stack"><button class="pill primary" id="e-log">End and check in</button><button class="pill glass" id="e-resume">Keep going</button><button class="textbtn danger" id="e-discard">Discard session</button></div></div>`,
   w => {
     $('#e-log').onclick = () => { closeSheet(); finishPlayer(false); };
-    $('#e-resume').onclick = () => { closeSheet(); P.running = true; P.last = performance.now(); renderPlayer(); };
+    $('#e-resume').onclick = () => { closeSheet(); setPaused(false); };
     $('#e-discard').onclick = () => { closeSheet(); stopPlayer(); };
-    w.querySelector('[data-close]').onclick = () => { closeSheet(); P.running = wasRunning; P.last = performance.now(); renderPlayer(); };
+    w.querySelector('[data-close]').onclick = () => { closeSheet(); setPaused(!wasRunning); };
   });
 }
 function releasePlayer(){ if (P) clearInterval(P.timer); P = null; try { wake && wake.release(); } catch (e) {} wake = null; }
@@ -2179,12 +2392,39 @@ function goTab(name){
 }
 /* Tab changes slide the page sideways; the backdrop and tab bar stay put. */
 function swapTab(fn, type){
-  if (!document.startViewTransition || reduceMotion) { fn(); return; }
-  const root = document.documentElement, page = $('#scroll'), bar = $('.tabbar');
-  page.style.viewTransitionName = 'page'; bar.style.viewTransitionName = 'tabbar'; root.dataset.vt = type;
-  try { document.startViewTransition(fn).finished.finally(() => { page.style.viewTransitionName = bar.style.viewTransitionName = ''; if (root.dataset.vt === type) delete root.dataset.vt; }); }
-  catch (e) { page.style.viewTransitionName = bar.style.viewTransitionName = ''; delete root.dataset.vt; fn(); }
+  dropGhost();
+  if (reduceMotion) { fn(); return; }
+  const page = $('#scroll'), dir = type === 'tab-next' ? -1 : 1;
+  const g = makeGhost(page, 'page-ghost'), shown = page.style.transform || 'none', op = page.style.opacity || 1;
+  Object.assign(g.style, { left: page.offsetLeft + 'px', top: page.offsetTop + 'px', width: page.offsetWidth + 'px', height: page.offsetHeight + 'px', display: 'flex', flexDirection: 'column' });
+  g.place($('#app')); ghost = g;
+  fn();
+  g.firstChild.animate([{ transform: shown, opacity: op }, { transform: `translateX(${dir * 26}%)`, opacity: 0 }], { duration: 320, easing: 'cubic-bezier(.4,0,.6,1)', fill: 'forwards' })
+    .onfinish = () => { if (ghost === g) { g.remove(); ghost = null; } };
+  page.animate([{ transform: `translateX(${-dir * 26}%)`, opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 560, delay: 60, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' });
 }
+/* Portrait only. Installed Android apps lock through the manifest; iPhone can't lock a web app,
+   so when the phone turns sideways the app is turned back to stay upright against the phone. */
+const coarsePointer = matchMedia('(pointer: coarse)').matches;
+let rot = 0;
+function orient(){
+  let a = typeof window.orientation === 'number' ? window.orientation : screen.orientation ? -screen.orientation.angle : 0;
+  a = ((a % 360) + 540) % 360 - 180;   // -180..180
+  rot = coarsePointer && Math.abs(a) === 90 ? -a : 0;
+  if (rot) document.documentElement.dataset.rot = rot > 0 ? 'cw' : 'ccw'; else delete document.documentElement.dataset.rot;
+}
+// a finger's movement in the app's own upright frame
+function toLocal(dx, dy){ return rot === -90 ? [-dy, dx] : rot === 90 ? [dy, -dx] : [dx, dy]; }
+try { screen.orientation.lock('portrait').catch(() => {}); } catch (e) {}
+addEventListener('orientationchange', () => setTimeout(orient, 50));
+if (screen.orientation) screen.orientation.addEventListener('change', orient);
+orient();
+/* iPhone can leave the page scrolled after the keyboard closes, which shifts every tap. Put it back. */
+document.addEventListener('focusout', () => setTimeout(() => {
+  const a = document.activeElement;
+  if (!a || !a.matches('input, textarea, select')) { window.scrollTo(0, 0); document.documentElement.scrollTop = document.body.scrollTop = 0; }
+}, 80));
+
 /* Swipe between Today, Progress and Library: the page follows the finger, then commits or springs back. */
 function resetDrag(){ const page = $('#scroll'); page.style.transition = page.style.transform = page.style.opacity = ''; }
 (() => {
@@ -2195,7 +2435,7 @@ function resetDrag(){ const page = $('#scroll'); page.style.transition = page.st
   }, {passive:true});
   page.addEventListener('touchmove', e => {
     if (sx === null) return;
-    dx = e.touches[0].clientX - sx; const dy = e.touches[0].clientY - sy;
+    let dy; [dx, dy] = toLocal(e.touches[0].clientX - sx, e.touches[0].clientY - sy);
     if (!mode) { if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.3) mode = 'h'; else if (Math.abs(dy) > 12) { mode = 'v'; return; } else return; }
     if (mode !== 'h') return;
     const i = TABS.indexOf(ui.tab), edge = (dx > 0 && i === 0) || (dx < 0 && i === TABS.length - 1);
@@ -2266,7 +2506,7 @@ const DEV_VIEWS = [
   ]],
   ['Workout', [
     ['Player A', () => startPlayer('A')], ['Player B', () => startPlayer('B')], ['Player C', () => startPlayer('C')], ['Player D', () => startPlayer('D')],
-    ['Player · last exercise', () => { startPlayer(suggestNext()); P.i = P.steps.length - 1; P.left = 12; renderPlayer(); }],
+    ['Player · last exercise', () => { startPlayer(suggestNext()); P.i = P.steps.length - 1; P.left = 12; setStep(false); }],
     ['Check-in', () => { const r = devRec(); showCheckin(Object.assign({}, r, { id: 'devrec' + Date.now(), date: todayISO(), dev: true })); }],
     ['Done + share', () => { showDone(devRec()); }],
   ]],

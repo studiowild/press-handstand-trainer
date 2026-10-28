@@ -1,5 +1,5 @@
 /* Still Point offline cache. Bump VERSION with each deploy so phones pick up the new build. */
-const VERSION = 'still-point-v1';
+const VERSION = 'still-point-v2';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
