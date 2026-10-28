@@ -190,7 +190,8 @@ body:has(#overlay:not([hidden])) #app { visibility: hidden; }
 .arriving .dial .t { animation: rise 1s var(--ease) 1.2s both; }
 .arriving .rise { animation-duration: 1s; animation-delay: calc(1.4s + var(--d, 0) * 110ms); }
 .arriving .topbar, .arriving .ptrack, .arriving .pmeta { animation: fade 1s ease 1s both; }
-.arriving .nextline, .arriving .controls, .arriving .pfoot, .arriving .pdots { animation: rise 1s var(--ease) 1.9s both; }
+.arriving .nextline, .arriving .controls, .arriving .pfoot { animation: rise 1s var(--ease) 1.9s both; }
+.arriving .pdots { animation: fade 1s ease 1.8s both; }
 .inner.landing .rise { animation-duration: 1s; animation-delay: calc(.6s + var(--d, 0) * 100ms); }
 .scroll { touch-action: pan-y; }
 
@@ -342,32 +343,34 @@ body:has(#overlay:not([hidden])) #app { visibility: hidden; }
 .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; gap: 0; min-height: 0; padding-block: clamp(14px, 6cqh, 60px) 10px;
   position: relative; touch-action: pan-y; --pp: 0; --tx: 0px; --ty: 0px; --k: 1; container-type: size; container-name: stage; }
 /* the dial takes what the stage can spare after the name and dose */
-.dial { position: relative; width: max(150px, min(74cqw, calc(100cqh - 150px), 280px)); container-type: inline-size; aspect-ratio: 1; max-width: 100%; flex-shrink: 0; z-index: 2; cursor: pointer;
+.dial { position: relative; width: max(150px, min(74cqw, calc(100cqh - 186px), 280px)); container-type: inline-size; aspect-ratio: 1; max-width: 100%; flex-shrink: 0; z-index: 2; cursor: pointer;
   transform: translate(calc(var(--tx) * var(--pp)), calc(var(--ty) * var(--pp))) scale(calc(1 + (var(--k) - 1) * var(--pp))); will-change: transform; }
 .dial .t small { opacity: calc(1 - var(--pp) * 2.4); }
 .dial .t .numeral { transform: scale(calc(1 + var(--pp) * .22)); }
 /* view 1: the timer, name and dose. View 2: the exercise in full, clock tucked top right */
 .pv1 { display: flex; flex-direction: column; align-items: center; opacity: calc(1 - var(--pp) * 1.7); transform: translateX(calc(var(--pp) * -32px)); }
-.pv2 { position: absolute; inset: 0; z-index: 1; overflow-y: auto; scrollbar-width: none; text-align: left; padding: 4px 0 18px;
+.pv2 { position: absolute; inset: 0; z-index: 1; overflow-y: auto; scrollbar-width: none; text-align: left; padding: 18px 0 64px;
   opacity: calc((var(--pp) - .3) * 1.45); transform: translateX(calc((1 - var(--pp)) * 32px)); pointer-events: none;
-  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(180deg, #000 calc(100% - 28px), transparent); }
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 72px), transparent calc(100% - 30px)); mask-image: linear-gradient(180deg, #000 calc(100% - 72px), transparent calc(100% - 30px)); }
 .pv2::-webkit-scrollbar { display: none; }
 .stage.on2 .pv2 { pointer-events: auto; }
 .stage.on2 .pv1 { pointer-events: none; }
-.pv2-head { min-height: 72px; padding-right: 88px; }
-.ex-title { font-family: var(--f-display); font-weight: 300; font-size: clamp(27px, 9.4cqw, 36px); line-height: 1.12; margin-top: 10px; }
-.ex-dose2 { margin-top: 10px; font-size: 15px; color: var(--ink-2); }
-.ex-cue2 { margin-top: 22px; font-family: var(--f-voice); font-style: italic; font-weight: 300; font-size: 18.5px; line-height: 1.5; letter-spacing: .02em; }
-.pv2-sub { display: block; margin-top: 28px; }
-.ex-how { list-style: none; margin: 8px 0 0; padding: 0; counter-reset: how; }
-.ex-how li { counter-increment: how; display: grid; grid-template-columns: 24px 1fr; gap: 6px; padding: 11px 0; border-top: 1px solid var(--hair); font-size: 15.5px; line-height: 1.45; color: var(--ink-2); }
-.ex-how li:first-child { border-top: 0; }
-.ex-how li::before { content: counter(how); font-size: 12px; font-weight: 600; color: var(--ink-3); padding-top: 3px; font-variant-numeric: tabular-nums; }
-.ex-x { margin-top: 8px; font-size: 15.5px; line-height: 1.45; color: var(--ink-2); }
-.pdots { display: flex; justify-content: center; gap: 2px; margin-bottom: 6px; }
-.pdots button { width: 32px; height: 24px; display: grid; place-items: center; }
+.pv2-head { min-height: 80px; padding-right: 92px; }
+.ex-title { font-family: var(--f-display); font-weight: 300; font-size: clamp(27px, 9.4cqw, 36px); line-height: 1.16; margin-top: 14px; }
+.ex-dose2 { margin-top: 14px; font-size: 15px; color: var(--ink-2); }
+.ex-cue2 { margin-top: 36px; font-family: var(--f-voice); font-style: italic; font-weight: 300; font-size: 19px; line-height: 1.6; letter-spacing: .02em; }
+.pv2-sub { display: block; margin-top: 44px; }
+.ex-how { list-style: none; margin: 14px 0 0; padding: 0; counter-reset: how; }
+.ex-how li { counter-increment: how; display: grid; grid-template-columns: 28px 1fr; gap: 6px; padding: 16px 0; border-top: 1px solid var(--hair); font-size: 15.5px; line-height: 1.6; color: var(--ink-2); }
+.ex-how li:first-child { border-top: 0; padding-top: 4px; }
+.ex-how li::before { content: counter(how); font-size: 12px; font-weight: 600; color: var(--ink-3); padding-top: 4px; font-variant-numeric: tabular-nums; }
+.ex-x { margin-top: 14px; font-size: 15.5px; line-height: 1.6; color: var(--ink-2); }
+/* view dots: under the name and dose on the timer, then they settle to the foot of the stage for the details */
+.pdots { position: relative; z-index: 3; display: flex; justify-content: center; gap: 0; margin-top: 22px; padding: 4px;
+  transform: translateY(calc(var(--dty, 0px) * var(--pp))); }
+.pdots button { width: 16px; height: 22px; display: grid; place-items: center; }
 .pdots i { width: 6px; height: 6px; border-radius: 3px; background: var(--ink-4); transition: width .45s var(--ease), background .45s var(--ease); }
-.pdots [aria-selected="true"] i { width: 18px; background: var(--ink-2); }
+.pdots [aria-selected="true"] i { width: 14px; background: var(--ink-2); }
 .dial svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .dial .ring { fill: none; stroke: var(--ring); stroke-width: .5; }
 .dial .arc { fill: none; stroke: var(--arc); stroke-width: .7; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; }
@@ -2066,11 +2069,11 @@ function renderPlayer(){
         <div class="t"><span class="numeral" id="p-time">${fmtClock(P.left)}</span><small id="p-state">${P.running ? 'remaining' : 'paused'}</small></div>
       </div>
       <div class="pv1" id="p-v1"><h2 class="ex-name rise" style="--d:1" id="p-name" aria-live="polite"></h2><p class="ex-dose rise" style="--d:2" id="p-dose"></p></div>
+      <div class="pdots" id="p-dots" role="tablist" aria-label="Views">
+        <button role="tab" data-pg="0" aria-selected="true" aria-label="Timer"><i></i></button>
+        <button role="tab" data-pg="1" aria-selected="false" aria-label="Exercise details"><i></i></button>
+      </div>
       <div class="pv2" id="p-v2" aria-hidden="true"></div>
-    </div>
-    <div class="pdots" role="tablist" aria-label="Views">
-      <button role="tab" data-pg="0" aria-selected="true" aria-label="Timer"><i></i></button>
-      <button role="tab" data-pg="1" aria-selected="false" aria-label="Exercise details"><i></i></button>
     </div>
     <p class="nextline" id="p-nextline"></p>
     <div class="controls">
@@ -2091,7 +2094,8 @@ function renderPlayer(){
   dial.onclick = flip; dial.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } };
   o.querySelectorAll('[data-pg]').forEach(b => b.onclick = () => goPage(+b.dataset.pg));
   bindPager($('#p-stage'));
-  paintControls(); setStep(false); measureDial();
+  paintControls(); setStep(false);
+  if (document.fonts) document.fonts.ready.then(measureDial);
 }
 function paintControls(){
   const play = $('#p-play'), v = $('#p-voice'), st = $('#p-state'), inner = $('#overlay .player-ui');
@@ -2117,6 +2121,7 @@ function setStep(animate){
   put($('#p-dose'), (s.code ? `<span class="label">${s.code}</span>` : '') + `<span>${esc(s.dose)}</span>`);
   const v2 = $('#p-v2'); if (v2._html !== detailHTML(s)) { put(v2, detailHTML(s)); v2.scrollTop = 0; }
   put($('#p-nextline'), nx ? 'Next · <b>' + esc(nx.name) + '</b>' : 'Next · <b>check in</b>');
+  measureDial();   // a longer name moves the dots
   updatePlayer();
 }
 function detailHTML(s){
@@ -2132,8 +2137,9 @@ function measureDial(){
   const st = $('#p-stage'), d = $('#p-dial'); if (!st || !d) return;
   const m = 72, ds = d.offsetWidth || 1, cxv = d.offsetLeft + ds / 2, cyv = d.offsetTop + ds / 2;
   st.style.setProperty('--tx', (st.clientWidth - m / 2 - cxv).toFixed(1) + 'px');
-  st.style.setProperty('--ty', (m / 2 - cyv).toFixed(1) + 'px');
+  st.style.setProperty('--ty', (m / 2 + 8 - cyv).toFixed(1) + 'px');
   st.style.setProperty('--k', (m / ds).toFixed(4));
+  const dots = $('#p-dots'); if (dots) st.style.setProperty('--dty', (st.clientHeight - dots.offsetTop - dots.offsetHeight - 2).toFixed(1) + 'px');
 }
 addEventListener('resize', () => { if (P) measureDial(); });
 function setPP(v){ if (!P) return; P.pp = v; const st = $('#p-stage'); if (st) st.style.setProperty('--pp', v.toFixed(4)); }
